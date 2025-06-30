@@ -1,0 +1,32 @@
+<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <!-- Фон -->
+  <rect width="64" height="64" fill="#10B981" rx="12"/>
+  
+  <!-- Автобус -->
+  <rect x="36" y="28" width="24" height="16" fill="#3B82F6" rx="4"/>
+  <!-- Окна автобуса -->
+  <rect x="38" y="30" width="4" height="4" fill="#FFFFFF" rx="1"/>
+  <rect x="44" y="30" width="4" height="4" fill="#FFFFFF" rx="1"/>
+  <rect x="50" y="30" width="4" height="4" fill="#FFFFFF" rx="1"/>
+  <rect x="56" y="30" width="2" height="4" fill="#FFFFFF" rx="1"/>
+  <!-- Колеса -->
+  <circle cx="42" cy="46" r="3" fill="#374151"/>
+  <circle cx="54" cy="46" r="3" fill="#374151"/>
+  
+  <!-- Парк -->
+  <circle cx="16" cy="38" r="8" fill="#22C55E"/>
+  <rect x="15" y="38" width="2" height="12" fill="#A3A3A3"/>
+  
+  <!-- Стрелка -->
+  <path d="M 24 38 L 34 34" stroke="#EF4444" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+  
+  <!-- Маркер стрелки -->
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="8" refX="8" refY="4" orient="auto">
+      <polygon points="0,0 0,8 10,4" fill="#EF4444"/>
+    </marker>
+  </defs>
+  
+  <!-- Текст (упрощенный) -->
+  <text x="32" y="58" text-anchor="middle" font-family="Arial, sans-serif" font-size="8" fill="#FFFFFF" font-weight="bold">ТРАНСПОРТ</text>
+</svg> 
