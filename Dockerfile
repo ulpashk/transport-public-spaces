@@ -21,7 +21,7 @@ RUN npm run build
 FROM nginx:alpine AS production
 
 # Копируем собранное приложение из этапа сборки
-COPY --from=builder /app/dist /usr/share/nginx/html
+COPY --from=builder /app/dist /usr/share/nginx/html/transport-public-spaces
 
 # Копируем кастомную конфигурацию nginx для SPA
 COPY nginx.conf /etc/nginx/conf.d/default.conf
