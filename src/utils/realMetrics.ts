@@ -17,12 +17,10 @@ interface GeoJSONData {
   features: GeoJSONFeature[];
 }
 
+import { loadGeoJSON } from './paths';
+
 export async function loadGeoJSONData(): Promise<GeoJSONData> {
-  const response = await fetch('/final.geojson');
-  if (!response.ok) {
-    throw new Error('Не удалось загрузить данные');
-  }
-  return response.json();
+  return loadGeoJSON();
 }
 
 export function calculateRealMetrics(data: GeoJSONData) {
