@@ -48,7 +48,8 @@ export default function Map({ selectedPark, visibleTypes, onToggleVisibility }: 
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("/final.geojson")
+    const basePath = import.meta.env.BASE_URL || '/';
+    fetch(`${basePath}final.geojson`)
       .then(res => res.json())
       .then(data => setFeatures(data.features as FeatureType[]))
       .catch(err => setError(err.message))
