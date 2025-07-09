@@ -12,7 +12,8 @@ export default function Stats() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/final.geojson")
+    const basePath = import.meta.env.BASE_URL || '/';
+    fetch(`${basePath}final.geojson`)
       .then(res => res.json())
       .then(data => {
         const tally: Record<string, number> = {};

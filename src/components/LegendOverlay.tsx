@@ -69,7 +69,7 @@ const LegendOverlay: React.FC<LegendOverlayProps> = ({
       case "Рекомендованный маршрут":
         return "Рек. маршрут";
       case "Удлинить маршрут":
-        return "Рек. удлинения";
+        return "Удлинить";
       case "Остановка":
         return "Остановка";
       case "Рекомендованная остановка":

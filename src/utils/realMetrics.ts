@@ -18,54 +18,52 @@ interface GeoJSONData {
 }
 
 export async function loadGeoJSONData(): Promise<GeoJSONData> {
-  const response = await fetch('/final.geojson');
-  if (!response.ok) {
-    throw new Error('Не удалось загрузить данные');
-  }
+  const response = await fetch(import.meta.env.BASE_URL + 'final.geojson');
+  if (!response.ok) throw new Error('Ошибка загрузки GeoJSON');
   return response.json();
 }
 
 export function calculateRealMetrics(data: GeoJSONData) {
   const features = data.features;
-  
+
   // ID маршрутов для исключения из расчетов
   const excludedIds = [51, 42, 29, 3, 5];
-  
+
   // Подсчет объектов по типам, исключая удаленные маршруты
   const stops = features.filter(f => f.properties.type === "Остановка");
   const routes = features.filter(f => f.properties.type === "Маршрут автобуса");
-  const publicSpaces = features.filter(f => 
-    f.properties.type === "Озеленение" && 
-    f.properties.distance_to_stop !== null && 
+  const publicSpaces = features.filter(f =>
+    f.properties.type === "Озеленение" &&
+    f.properties.distance_to_stop !== null &&
     !isNaN(parseInt(f.properties.distance_to_stop)) &&
     parseInt(f.properties.distance_to_stop) <= 750
   );
-  const recommendedStops = features.filter(f => 
+  const recommendedStops = features.filter(f =>
     f.properties.type === "Рекомендованная остановка" &&
     !excludedIds.includes(f.properties.id)
   );
-  
+
   // Уникальные районы
   const districts = new Set(
     features
       .map(f => f.properties.district)
       .filter(d => d && d.trim() !== "")
   );
-  
+
   // Функция расчета длины по координатам
   function haversineDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
     const R = 6371; // Радиус Земли в км
     const dLat = (lat2 - lat1) * Math.PI / 180;
     const dLon = (lon2 - lon1) * Math.PI / 180;
-    const a = Math.sin(dLat/2) * Math.sin(dLat/2) + 
-              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
               Math.sin(dLon/2) * Math.sin(dLon/2);
     return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
   }
 
   function calculateGeometryLength(geometry: any): number {
     if (!geometry || !geometry.coordinates) return 0;
-    
+
     if (geometry.type === 'LineString') {
       let length = 0;
       for (let i = 0; i < geometry.coordinates.length - 1; i++) {
@@ -75,7 +73,7 @@ export function calculateRealMetrics(data: GeoJSONData) {
       }
       return length;
     }
-    
+
     if (geometry.type === 'MultiLineString') {
       return geometry.coordinates.reduce((total: number, lineCoords: number[][]) => {
         let lineLength = 0;
@@ -87,7 +85,7 @@ export function calculateRealMetrics(data: GeoJSONData) {
         return total + lineLength;
       }, 0);
     }
-    
+
     return 0;
   }
 
@@ -95,24 +93,24 @@ export function calculateRealMetrics(data: GeoJSONData) {
   const totalLength = routes.reduce((sum, route) => {
     return sum + calculateGeometryLength(route.geometry);
   }, 0) * 1000; // конвертируем в метры
-  
+
   // Вычисление среднего расстояния до остановок на основе реальных данных
   // Все publicSpaces уже отфильтрованы по расстоянию ≤750 метров
   const publicSpacesWithDistance = publicSpaces;
-  
-  const totalDistance = publicSpacesWithDistance.reduce((sum, space) => 
+
+  const totalDistance = publicSpacesWithDistance.reduce((sum, space) =>
     sum + parseInt(space.properties.distance_to_stop), 0
   );
-  
-  const averageDistance = publicSpacesWithDistance.length > 0 
+
+  const averageDistance = publicSpacesWithDistance.length > 0
     ? Math.round(totalDistance / publicSpacesWithDistance.length)
     : 0;
-  
+
   // Доступность общественных пространств
   // Считаем, сколько общественных пространств имеют связанные маршруты (исключая удаленные)
   const accessibleSpaces = publicSpaces.filter(space => {
     const props = space.properties;
-    
+
     // Фильтруем исключенные ID из рекомендованных и удлиненных маршрутов
     const validRecRoutes = (props.nearby_rec_route_ids || []).filter(
       (id: any) => !excludedIds.includes(Number(id))
@@ -120,14 +118,14 @@ export function calculateRealMetrics(data: GeoJSONData) {
     const validExtRoutes = (props.nearby_ext_route_ids || []).filter(
       (id: any) => !excludedIds.includes(Number(id))
     );
-    
+
     return (props.nearby_route_ids && props.nearby_route_ids.length > 0) ||
            validRecRoutes.length > 0 ||
            validExtRoutes.length > 0;
   });
-  
+
   const accessibilityPercentage = Math.round((accessibleSpaces.length / publicSpaces.length) * 100);
-  
+
   return {
     stops: stops.length,
     routes: routes.length,
@@ -138,4 +136,4 @@ export function calculateRealMetrics(data: GeoJSONData) {
     averageDistanceM: averageDistance,
     accessibilityPercentage
   };
-} 
+}
