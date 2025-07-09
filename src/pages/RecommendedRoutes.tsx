@@ -821,10 +821,10 @@ export default function RecommendedRoutes() {
               </Link>
             </div>
             <div className="text-center">
-              <h2 className="font-bold text-gray-900 mb-2 header">
+              <h2 className="text-3xl font-bold text-gray-900 mb-2">
                 Рекомендованные маршруты
               </h2>
-              <p className="text-blue-600 font-medium header">
+              <p className="text-lg text-blue-600 font-medium">
                 для улучшения доступности
               </p>
             </div>
@@ -833,7 +833,7 @@ export default function RecommendedRoutes() {
         </div>
 
         {/* KPI карточки для рекомендованных маршрутов */}
-        <div className="flex-shrink-0 grid grid-cols-5 content-padding stats-grid">
+        <div className="px-6 flex-shrink-0 grid grid-cols-5 gap-6">
           <div className="bg-white rounded-xl shadow-xl p-6 border border-gray-200 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 backdrop-blur-sm">
             <div className="flex items-center justify-between">
               <div>
@@ -969,14 +969,14 @@ export default function RecommendedRoutes() {
         </div>
 
         {/* Таблица маршрутов слева и карта справа */}
-        <div className="flex-1 pb-6 pt-6 flex min-h-0 content-padding layout-flex">
+        <div className="flex-1 px-6 pb-6 pt-6 flex gap-6 min-h-0">
           {/* Таблица маршрутов - 40% ширины */}
-          <div className="w-2/5 h-full sidebar">
+          <div className="w-2/5 h-full">
             <RoutesTable onSelect={handleSelectRoute} selectedRoute={selectedRoute} routes={routes} loading={loading} error={error} />
           </div>
 
           {/* Карта - 60% ширины */}
-          <div className="w-3/5 bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden backdrop-blur-sm map-container">
+          <div className="w-3/5 bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden backdrop-blur-sm">
             <MapTiler
               selectedRoute={selectedRoute ? {
                 routeName: selectedRoute.name,

@@ -214,16 +214,12 @@ body {
   gap: 1rem !important; /* gap-4 - меньшие промежутки */
 }
 
-.layout-flex {
-  gap: 1rem !important; /* responsive gap между таблицей и картой */
-}
-
 .map-container {
   height: 400px !important; /* оптимально для ноутбуков */
 }
 
 .sidebar {
-  width: 240px !important; /* очень компактный sidebar */
+  width: 280px !important; /* компактный sidebar */
 }
 
 /* Увеличиваем для больших мониторов (≥1440px) */
@@ -240,16 +236,12 @@ body {
     gap: 1.5rem !important; /* gap-6 */
   }
   
-  .layout-flex {
-    gap: 1.5rem !important;
-  }
-  
   .map-container {
     height: 500px !important;
   }
   
   .sidebar {
-    width: 280px !important;
+    width: 320px !important;
   }
 }
 
@@ -271,16 +263,12 @@ body {
     gap: 2rem !important; /* gap-8 */
   }
   
-  .layout-flex {
-    gap: 2rem !important;
-  }
-  
   .map-container {
     height: 600px !important;
   }
   
   .sidebar {
-    width: 320px !important;
+    width: 360px !important;
   }
 }
 
@@ -300,7 +288,7 @@ body {
   }
   
   .sidebar {
-    width: 220px !important;
+    width: 256px !important;
   }
   
   .map-container {
