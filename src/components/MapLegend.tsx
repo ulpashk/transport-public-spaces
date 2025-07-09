@@ -1,10 +1,10 @@
 import React from 'react';
-import { 
-  MapPin, 
-  Navigation, 
-  Route, 
-  Trees, 
-  Waves, 
+import {
+  MapPin,
+  Navigation,
+  Route,
+  Trees,
+  Waves,
   Circle,
   Map as MapIcon,
   ArrowUp
@@ -23,7 +23,7 @@ interface MapLegendProps {
 }
 
 const MapLegend: React.FC<MapLegendProps> = ({ items, position = 'bottom-left' }) => {
-  
+
   // Определяем иконки для разных типов объектов
   const getIcon = (type: string) => {
     const iconProps = {
@@ -105,27 +105,30 @@ const MapLegend: React.FC<MapLegendProps> = ({ items, position = 'bottom-left' }
           {visibleItems.map((item) => (
             <div key={item.type} className="flex items-center gap-2">
               {/* Иконка */}
-              <div 
+              <div
                 className="flex items-center justify-center flex-shrink-0"
                 style={{ color: item.color }}
               >
                 {getIcon(item.type)}
               </div>
-              
+
               {/* Название и количество */}
               <div className="flex-1 min-w-0">
-                <div className="text-xs font-medium text-gray-800 truncate">
-                  {getFullName(item.type)}
+                <div className={'legend_item'}>
+                  <div className="text-xs font-medium text-gray-800 truncate">
+                    {getFullName(item.type)}
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    {item.count.toLocaleString()}
+                  </div>
                 </div>
-                <div className="text-xs text-gray-500">
-                  {item.count.toLocaleString()}
-                </div>
+
               </div>
-              
+
               {/* Цветовой индикатор */}
-              <div 
-                className="w-3 h-3 rounded-full flex-shrink-0"
-                style={{ backgroundColor: item.color }}
+              <div
+                  className="w-3 h-3 rounded-full flex-shrink-0"
+                  style={{backgroundColor: item.color}}
               ></div>
             </div>
           ))}
@@ -135,4 +138,4 @@ const MapLegend: React.FC<MapLegendProps> = ({ items, position = 'bottom-left' }
   );
 };
 
-export default MapLegend; 
+export default MapLegend;

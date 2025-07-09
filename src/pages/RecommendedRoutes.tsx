@@ -8,7 +8,7 @@ import { getDisplayName } from "../utils/displayName";
 
 const ROUTE_TYPES = [
   "Рекомендованный маршрут",
-  "Удлинить маршрут", 
+  "Удлинить маршрут",
   "Маршрут автобуса",
   "Остановка",
   "Рекомендованная остановка",
@@ -46,8 +46,8 @@ function RoutesTable({ onSelect, selectedRoute, routes, loading, error }: Routes
 
   const rowsPerPage = 10;
 
-    const filteredRoutes = search 
-    ? routes.filter(route => 
+    const filteredRoutes = search
+    ? routes.filter(route =>
         route.name.toLowerCase().includes(search.toLowerCase()) ||
         (route.uniqueId !== null && route.uniqueId.toString().includes(search))
       )
@@ -145,52 +145,53 @@ function RoutesTable({ onSelect, selectedRoute, routes, loading, error }: Routes
   return (
     <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-lg border border-gray-200 overflow-hidden h-full flex flex-col">
              {/* Заголовок с градиентом */}
-       <div className="bg-gradient-to-r from-green-600 to-emerald-600 px-6 py-4">
-         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-           <div className="text-white">
-             <div className="flex items-center space-x-3">
-               <Route className="w-5 h-5" />
-               <h2 className="text-lg font-semibold">Рекомендованные маршруты</h2>
-             </div>
-             <p className="text-green-100 mt-2 text-sm">
-               Анализ {sortedRoutes.length} маршрутов для улучшения доступности
-             </p>
-           </div>
-           
-           {/* Поиск с иконкой */}
-           <div className="relative">
-             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-               <Search className="h-4 w-4 text-gray-400" />
-             </div>
-             <input
-               type="text"
-                                 placeholder="Поиск по названию или ID..."
-               className="pl-10 pr-4 py-2.5 w-full sm:w-72 text-sm bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50 focus:bg-white/20 transition-all duration-200"
-               value={search}
-               onChange={e => setSearch(e.target.value)}
-             />
-           </div>
-         </div>
-       </div>
+      <div className="bg-gradient-to-r from-green-600 to-emerald-600 px-6 py-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="text-white">
+            <div className="flex items-center space-x-3">
+              <Route className="w-5 h-5"/>
+              <h2 className="text-lg font-semibold">Рекомендованные маршруты</h2>
+            </div>
+            <p className="text-green-100 mt-2 text-sm">
+              Анализ {sortedRoutes.length} маршрутов для улучшения доступности
+            </p>
+          </div>
+
+          {/* Поиск с иконкой */}
+
+        </div>
+        <div className="relative search_item">
+          <div className="absolute inset-y-0  pl-3 flex items-center pointer-events-none">
+            <Search className="h-4 w-4 text-gray-400"/>
+          </div>
+          <input
+              type="text"
+              placeholder="Поиск по названию или ID..."
+              className="pl-10 pr-4 py-2.5 w-full sm:w-72 text-sm bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-white/50 focus:bg-white/20 transition-all duration-200"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+          />
+        </div>
+      </div>
       {/* Таблица с улучшенным дизайном */}
       <div className="overflow-hidden flex-1 flex flex-col">
         <div className="flex-1 overflow-y-auto custom-scrollbar">
           <table className="min-w-full">
-                         <thead className="bg-gradient-to-r from-gray-50 to-gray-100 sticky top-0 z-10 border-b border-gray-200">
-               <tr>
-                 <th 
-                   className="group cursor-pointer px-6 py-4 text-left font-semibold text-gray-700 text-base hover:bg-gray-200 transition-colors duration-200" 
-                   onClick={() => handleSort("uniqueId")}
-                 >
-                   <div className="flex items-center space-x-2">
-                     <span>ID</span>
+            <thead className="bg-gradient-to-r from-gray-50 to-gray-100 sticky top-0 z-10 border-b border-gray-200">
+            <tr>
+              <th
+                  className="group cursor-pointer px-6 py-4 text-left font-semibold text-gray-700 text-base hover:bg-gray-200 transition-colors duration-200"
+                  onClick={() => handleSort("uniqueId")}
+              >
+                <div className="flex items-center space-x-2">
+                  <span>ID</span>
                      <div className="text-gray-400 text-lg">
                        {sortKey === "uniqueId" ? (sortOrder === "asc" ? "▲" : "▼") : "⇅"}
                      </div>
                    </div>
                  </th>
-                 <th 
-                   className="group cursor-pointer px-6 py-4 text-left font-semibold text-gray-700 text-base hover:bg-gray-200 transition-colors duration-200" 
+                 <th
+                   className="group cursor-pointer px-6 py-4 text-left font-semibold text-gray-700 text-base hover:bg-gray-200 transition-colors duration-200"
                    onClick={() => handleSort("name")}
                  >
                    <div className="flex items-center space-x-2">
@@ -200,8 +201,8 @@ function RoutesTable({ onSelect, selectedRoute, routes, loading, error }: Routes
                      </div>
                    </div>
                  </th>
-                 <th 
-                   className="group cursor-pointer px-6 py-4 text-left font-semibold text-gray-700 text-base hover:bg-gray-200 transition-colors duration-200" 
+                 <th
+                   className="group cursor-pointer px-6 py-4 text-left font-semibold text-gray-700 text-base hover:bg-gray-200 transition-colors duration-200"
                    onClick={() => handleSort("district")}
                  >
                    <div className="flex items-center space-x-2">
@@ -211,8 +212,8 @@ function RoutesTable({ onSelect, selectedRoute, routes, loading, error }: Routes
                      </div>
                    </div>
                  </th>
-                 <th 
-                   className="group cursor-pointer px-6 py-4 text-center font-semibold text-gray-700 text-base hover:bg-gray-200 transition-colors duration-200" 
+                 <th
+                   className="group cursor-pointer px-6 py-4 text-center font-semibold text-gray-700 text-base hover:bg-gray-200 transition-colors duration-200"
                    onClick={() => handleSort("type")}
                  >
                    <div className="flex items-center justify-center space-x-2">
@@ -291,14 +292,14 @@ function RoutesTable({ onSelect, selectedRoute, routes, loading, error }: Routes
            >
              ← Назад
            </button>
-           
+
            <div className="flex flex-col sm:flex-row items-center gap-4">
              <div className="flex items-center space-x-2 text-sm text-gray-600 font-medium">
                <span>Стр. {currentPage} из {pageCount}</span>
                <span className="text-gray-400">•</span>
                <span>{sortedRoutes.length} маршрутов</span>
              </div>
-             
+
              <div className="flex items-center space-x-2">
                <span className="text-sm text-gray-600 font-medium">Стр.:</span>
                <input
@@ -320,7 +321,7 @@ function RoutesTable({ onSelect, selectedRoute, routes, loading, error }: Routes
                </button>
              </div>
            </div>
-           
+
            <button
              onClick={handleNext}
              disabled={startIdx + rowsPerPage >= sortedRoutes.length}
@@ -354,28 +355,28 @@ export default function RecommendedRoutes() {
           throw new Error('Не удалось загрузить данные');
         }
         const data = await response.json();
-        
+
         // Фильтруем рекомендованные маршруты и удлинения
-        const routeFeatures = data.features.filter((feature: any) => 
-          feature.properties.type === "Рекомендованный маршрут" || 
+        const routeFeatures = data.features.filter((feature: any) =>
+          feature.properties.type === "Рекомендованный маршрут" ||
           feature.properties.type === "Удлинить маршрут"
         );
 
         // Получаем все общественные пространства для подсчета пересечений
-        const publicSpaces = data.features.filter((feature: any) => 
+        const publicSpaces = data.features.filter((feature: any) =>
           feature.properties.type === "Озеленение"
         );
 
         // Преобразуем в нужный формат
         // ID маршрутов для исключения из отображения
         const excludedIds = [51, 42, 29, 3, 5];
-        
+
         const formattedRoutes: RouteData[] = routeFeatures
           .filter((feature: any) => !excludedIds.includes(feature.properties.id))
           .map((feature: any, index: number) => {
           const props = feature.properties;
           const length = props.Shape__Length ? (props.Shape__Length / 1000).toFixed(1) : Math.random() * 20 + 5;
-          
+
           // Подсчитываем реальное количество общественных пространств, связанных с маршрутом
           let publicSpacesCount = 0;
           if (props.id) {
@@ -388,7 +389,7 @@ export default function RecommendedRoutes() {
               );
             }).length;
           }
-          
+
           return {
             id: `${props.type}-${props.id || index}-${props.district || 'default'}`,
             uniqueId: props.id ?? null,
@@ -402,7 +403,7 @@ export default function RecommendedRoutes() {
         });
 
         setRoutes(formattedRoutes);
-        
+
         // Рассчитываем метрики маршрутов
         const metrics = calculateRouteMetrics(data);
         setRouteMetrics(metrics);
@@ -533,7 +534,7 @@ export default function RecommendedRoutes() {
   // Компонент информационного поп-апа
   const InfoPopup = () => {
     if (!showInfoPopup) return null;
-    
+
     const content = getPopupContent(showInfoPopup);
     if (!content) return null;
 
@@ -543,7 +544,7 @@ export default function RecommendedRoutes() {
           <div className={`bg-gradient-to-r ${content.gradient} px-6 py-4 rounded-t-xl`}>
             <div className="flex items-center justify-between">
               <h3 className="text-xl font-bold text-white">{content.title}</h3>
-              <button 
+              <button
                 onClick={() => setShowInfoPopup(null)}
                 className="text-white hover:bg-white/20 rounded-lg p-2 transition-colors"
               >
@@ -551,20 +552,20 @@ export default function RecommendedRoutes() {
               </button>
             </div>
           </div>
-          
+
           <div className="p-6 space-y-4">
             <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded">
               <p className="text-blue-800 font-medium">
                 🎯 <strong>Цель:</strong> {content.goal}
               </p>
             </div>
-            
+
             <div className="space-y-3">
               <h4 className="font-semibold text-gray-900 flex items-center">
                 <Route className="w-5 h-5 mr-2 text-gray-600" />
                 Как работает алгоритм:
               </h4>
-              
+
               <div className="space-y-2 text-gray-700">
                 {content.steps.map((step, index) => (
                   <div key={index} className="flex items-start space-x-3">
@@ -576,7 +577,7 @@ export default function RecommendedRoutes() {
                 ))}
               </div>
             </div>
-            
+
             <div className={`bg-${content.steps[0].color}-50 border-l-4 border-${content.steps[0].color}-400 p-4 rounded`}>
               <h4 className={`font-medium text-${content.steps[0].color}-800 mb-2`}>📊 Результат:</h4>
               <p className={`text-${content.steps[0].color}-700`}>{content.result}</p>
@@ -604,12 +605,12 @@ export default function RecommendedRoutes() {
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-50/30 to-transparent"></div>
             {/* Вторичный слой для плавности */}
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-indigo-50/20 to-transparent"></div>
-            
+
             {/* Декоративные элементы парка с транспортом */}
             <svg className="absolute inset-0 w-full h-full" viewBox="0 0 1400 120" preserveAspectRatio="none">
               {/* Небо с градиентом */}
               <rect x="0" y="0" width="1400" height="50" fill="url(#transportSkyGradient)" opacity="0.3"/>
-              
+
               {/* Половина солнышка - правая часть (продолжение с первой страницы) */}
               <defs>
                 <clipPath id="rightHalf">
@@ -626,27 +627,27 @@ export default function RecommendedRoutes() {
                   <line x1="11" y1="36" x2="18" y2="43" stroke="#FCD34D" strokeWidth="2"/>
                 </g>
               </g>
-              
+
               {/* Облака - продолжение с первой страницы */}
               <g opacity="0.25">
                 <ellipse cx="200" cy="30" rx="30" ry="15" fill="#E5E7EB"/>
                 <ellipse cx="225" cy="28" rx="25" ry="12" fill="#E5E7EB"/>
                 <ellipse cx="215" cy="25" rx="18" ry="10" fill="#F3F4F6"/>
               </g>
-              
+
               <g opacity="0.3">
                 <ellipse cx="600" cy="20" rx="25" ry="12" fill="#E5E7EB"/>
                 <ellipse cx="620" cy="18" rx="20" ry="10" fill="#E5E7EB"/>
                 <ellipse cx="610" cy="15" rx="15" ry="8" fill="#F3F4F6"/>
               </g>
-              
+
               {/* Трава/газон */}
               <rect x="0" y="70" width="1400" height="50" fill="#16A34A" opacity="0.2"/>
-              
+
               {/* Дорожки */}
               <path d="M 0 90 Q 200 85 400 90 T 800 85 Q 1000 80 1200 85 L 1400 88" stroke="#D1D5DB" strokeWidth="3" fill="none" opacity="0.4"/>
               <path d="M 300 70 Q 400 95 500 80 Q 600 65 700 90" stroke="#D1D5DB" strokeWidth="2" fill="none" opacity="0.3"/>
-              
+
               {/* Деревья - продолжение парка с первой страницы */}
               <g opacity="0.38">
                 <rect x="99" y="52" width="2" height="23" fill="#8B4513"/>
@@ -654,21 +655,21 @@ export default function RecommendedRoutes() {
                 <circle cx="106" cy="44" r="7" fill="#16A34A"/>
                 <circle cx="94" cy="42" r="8" fill="#15803D"/>
               </g>
-              
+
               <g opacity="0.4">
                 <rect x="399" y="55" width="2" height="20" fill="#8B4513"/>
                 <circle cx="400" cy="50" r="10" fill="#22C55E"/>
                 <circle cx="405" cy="47" r="6" fill="#16A34A"/>
                 <circle cx="395" cy="45" r="7" fill="#15803D"/>
               </g>
-              
+
               <g opacity="0.35">
                 <rect x="699" y="50" width="2" height="25" fill="#8B4513"/>
                 <circle cx="700" cy="45" r="12" fill="#22C55E"/>
                 <circle cx="707" cy="42" r="8" fill="#16A34A"/>
                 <circle cx="693" cy="40" r="9" fill="#15803D"/>
               </g>
-              
+
               {/* Скамейки - плоские */}
               <g opacity="0.4">
                 <rect x="350" y="85" width="20" height="2" fill="#8B4513"/>
@@ -676,27 +677,27 @@ export default function RecommendedRoutes() {
                 <rect x="367" y="85" width="1" height="6" fill="#6B7280"/>
                 <rect x="354" y="80" width="12" height="3" fill="#8B4513"/>
               </g>
-              
+
               <g opacity="0.35">
                 <rect x="750" y="83" width="20" height="2" fill="#8B4513"/>
                 <rect x="752" y="83" width="1" height="6" fill="#6B7280"/>
                 <rect x="767" y="83" width="1" height="6" fill="#6B7280"/>
                 <rect x="754" y="78" width="12" height="3" fill="#8B4513"/>
               </g>
-              
+
               {/* Фонари - плоские */}
               <g opacity="0.35">
                 <rect x="399" y="60" width="1" height="20" fill="#6B7280"/>
                 <circle cx="400" cy="58" r="3" fill="#FCD34D"/>
                 <rect x="398" y="80" width="3" height="1" fill="#6B7280"/>
               </g>
-              
+
               <g opacity="0.3">
                 <rect x="999" y="55" width="1" height="25" fill="#6B7280"/>
                 <circle cx="1000" cy="53" r="3" fill="#FCD34D"/>
                 <rect x="998" y="80" width="3" height="1" fill="#6B7280"/>
               </g>
-              
+
               {/* Клумбы с цветами - плоские */}
               <g opacity="0.3">
                 <ellipse cx="150" cy="95" rx="12" ry="6" fill="#15803D"/>
@@ -705,7 +706,7 @@ export default function RecommendedRoutes() {
                 <circle cx="148" cy="97" r="1.5" fill="#8B5CF6"/>
                 <circle cx="155" cy="95" r="1.5" fill="#EC4899"/>
               </g>
-              
+
               <g opacity="0.25">
                 <ellipse cx="650" cy="98" rx="15" ry="8" fill="#15803D"/>
                 <circle cx="645" cy="96" r="1.5" fill="#EF4444"/>
@@ -714,12 +715,12 @@ export default function RecommendedRoutes() {
                 <circle cx="655" cy="98" r="1.5" fill="#EC4899"/>
                 <circle cx="658" cy="95" r="1.5" fill="#10B981"/>
               </g>
-              
+
               {/* Кустарники - плоские */}
               <ellipse cx="100" cy="98" rx="8" ry="4" fill="#22C55E" opacity="0.25"/>
               <ellipse cx="450" cy="105" rx="6" ry="3" fill="#16A34A" opacity="0.2"/>
               <ellipse cx="850" cy="102" rx="10" ry="5" fill="#15803D" opacity="0.23"/>
-              
+
               {/* ТРАНСПОРТНЫЕ ЭЛЕМЕНТЫ В КОНЦЕ - автобус и остановка */}
               {/* Автобусная остановка */}
               <g opacity="0.5">
@@ -737,7 +738,7 @@ export default function RecommendedRoutes() {
                 <rect x="1085" y="55" width="8" height="6" fill="#DC2626"/>
                 <text x="1089" y="60" font-size="3" fill="white" text-anchor="middle">A</text>
               </g>
-              
+
               {/* Автобус приближается к остановке */}
               <g opacity="0.5">
                 <rect x="1130" y="75" width="25" height="12" fill="#3B82F6" rx="2"/>
@@ -755,11 +756,11 @@ export default function RecommendedRoutes() {
                 <rect x="1132" y="76" width="6" height="4" fill="#FCD34D"/>
                 <text x="1135" y="79" font-size="2" fill="#000" text-anchor="middle">42</text>
               </g>
-              
+
               {/* Дорога для автобуса */}
               <rect x="1000" y="85" width="400" height="8" fill="#374151" opacity="0.3"/>
               <path d="M 1020 89 L 1040 89 M 1060 89 L 1080 89 M 1100 89 L 1120 89 M 1140 89 L 1160 89 M 1180 89 L 1200 89 M 1220 89 L 1240 89 M 1260 89 L 1280 89 M 1300 89 L 1320 89 M 1340 89 L 1360 89" stroke="#FFFFFF" strokeWidth="0.5" opacity="0.4"/>
-              
+
               {/* Градиент для неба */}
               <defs>
                 <linearGradient id="transportSkyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -768,7 +769,7 @@ export default function RecommendedRoutes() {
                 </linearGradient>
               </defs>
             </svg>
-            
+
             {/* Сильно размытые края - левый */}
             <div className="absolute left-0 top-0 bottom-0 w-96 bg-gradient-to-r from-white via-white/60 to-transparent blur-3xl"></div>
             {/* Сильно размытые края - правый */}
@@ -779,24 +780,24 @@ export default function RecommendedRoutes() {
             {/* Третий слой размытия */}
             <div className="absolute left-0 top-0 bottom-0 w-64 bg-gradient-to-r from-white/70 via-transparent to-transparent blur-xl"></div>
             <div className="absolute right-0 top-0 bottom-0 w-64 bg-gradient-to-l from-white/70 via-transparent to-transparent blur-xl"></div>
-            
+
             {/* Размытый нижний край для плавного перехода */}
             <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white via-white/80 to-transparent blur-2xl"></div>
             <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-gray-50/90 via-gray-50/60 to-transparent blur-xl"></div>
             <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white/90 via-white/50 to-transparent blur-lg"></div>
           </div>
-          
+
           {/* Контент заголовка */}
           <div className="relative z-10 px-6 py-6 flex items-center justify-between">
             <div className="flex-1 flex justify-start">
-              <Link 
-                to="/" 
+              <Link
+                to="/"
                 className="group relative"
               >
-                <svg 
-                  width="180" 
-                  height="120" 
-                  viewBox="0 0 180 120" 
+                <svg
+                  width="180"
+                  height="120"
+                  viewBox="0 0 180 120"
                   className="transition-opacity duration-300 hover:opacity-80"
                 >
                   <defs>
@@ -805,15 +806,15 @@ export default function RecommendedRoutes() {
                       <stop offset="100%" stopColor="#4B5563" />
                     </linearGradient>
                   </defs>
-                  <path 
-                    d="M 20 24 L 180 24 L 180 96 L 20 96 L 0 60 Z" 
+                  <path
+                    d="M 20 24 L 180 24 L 180 96 L 20 96 L 0 60 Z"
                     fill="url(#grayGradient)"
                     className="group-hover:fill-gray-700 transition-colors duration-300"
                   />
-                  <text 
-                    x="100" 
-                    y="64" 
-                    textAnchor="middle" 
+                  <text
+                    x="100"
+                    y="64"
+                    textAnchor="middle"
                     className="fill-white font-medium text-lg"
                   >
                     ← Анализ
@@ -834,138 +835,153 @@ export default function RecommendedRoutes() {
         </div>
 
         {/* KPI карточки для рекомендованных маршрутов */}
-        <div className="flex-shrink-0 grid grid-cols-5 content-padding stats-grid">
-          <div className="bg-white rounded-xl shadow-xl p-6 border border-gray-200 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 backdrop-blur-sm">
+        <div className="flex-shrink-0 grid grid-cols-5 content-padding stats-grid gap-x-1.5">
+          <div
+              className="bg-white rounded-xl shadow-xl p-6 border border-gray-200 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 backdrop-blur-sm">
+            <div className="flex items-center space-x-2">
+              <p className="text-sm font-medium text-gray-600">Новые маршруты</p>
+              <button
+                  onClick={() => setShowInfoPopup('new-routes')}
+                  className="text-gray-400 hover:text-green-600 transition-colors duration-200"
+                  title="Подробнее об алгоритме расчета"
+              >
+                <Info className="w-4 h-4"/>
+              </button>
+            </div>
             <div className="flex items-center justify-between">
               <div>
-                <div className="flex items-center space-x-2">
-                  <p className="text-sm font-medium text-gray-600">Новые маршруты</p>
-                  <button
-                    onClick={() => setShowInfoPopup('new-routes')}
-                    className="text-gray-400 hover:text-green-600 transition-colors duration-200"
-                    title="Подробнее об алгоритме расчета"
-                  >
-                    <Info className="w-4 h-4" />
-                  </button>
-                </div>
+
                 <p className="text-3xl font-bold text-gray-900">
                   {routes.filter(r => r.type === "Рекомендованный маршрут").length}
                 </p>
-                <p className="text-sm text-green-600 flex items-center mt-1">
-                  <Navigation className="w-4 h-4 mr-1" />
-                  Рекомендованных
-                </p>
+
               </div>
               <div className="w-12 h-12 bg-gradient-to-br from-green-100 to-green-200 rounded-xl flex items-center justify-center shadow-lg">
-                <Route className="w-6 h-6 text-green-600" />
+                <Route className="w-6 h-6 text-green-600"/>
               </div>
             </div>
+            <p className="text-sm text-green-600 flex items-center mt-1">
+              <Navigation className="w-4 h-4 mr-1"/>
+              Рекомендованных
+            </p>
           </div>
 
-          <div className="bg-white rounded-xl shadow-xl p-6 border border-gray-200 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 backdrop-blur-sm">
+          <div
+              className="bg-white rounded-xl shadow-xl p-6 border border-gray-200 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 backdrop-blur-sm">
+            <div className="flex items-center space-x-2">
+              <p className="text-sm font-medium text-gray-600">Удлинения</p>
+              <button
+                  onClick={() => setShowInfoPopup('extensions')}
+                  className="text-gray-400 hover:text-blue-600 transition-colors duration-200"
+                  title="Подробнее об алгоритме удлинений"
+              >
+                <Info className="w-4 h-4"/>
+              </button>
+            </div>
             <div className="flex items-center justify-between">
               <div>
-                <div className="flex items-center space-x-2">
-                  <p className="text-sm font-medium text-gray-600">Удлинения</p>
-                  <button
-                    onClick={() => setShowInfoPopup('extensions')}
-                    className="text-gray-400 hover:text-blue-600 transition-colors duration-200"
-                    title="Подробнее об алгоритме удлинений"
-                  >
-                    <Info className="w-4 h-4" />
-                  </button>
-                </div>
+
                 <p className="text-3xl font-bold text-gray-900">
                   {routes.filter(r => r.type === "Удлинить маршрут").length}
                 </p>
-                <p className="text-sm text-green-600 flex items-center mt-1">
-                  <Navigation className="w-4 h-4 mr-1" />
-                  Существующих маршрутов
-                </p>
+
               </div>
               <div className="w-12 h-12 bg-gradient-to-br from-green-100 to-green-200 rounded-xl flex items-center justify-center shadow-lg">
-                <Navigation className="w-6 h-6 text-green-600" />
+                <Navigation className="w-6 h-6 text-green-600"/>
               </div>
             </div>
+            <p className="text-sm text-green-600 flex items-center mt-1">
+              <Navigation className="w-4 h-4 mr-1"/>
+              Существующих маршрутов
+            </p>
           </div>
 
-          <div className="bg-white rounded-xl shadow-xl p-6 border border-gray-200 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 backdrop-blur-sm">
+          <div
+              className="bg-white rounded-xl shadow-xl p-6 border border-gray-200 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 backdrop-blur-sm">
+            <div className="flex items-center space-x-2">
+              <p className="text-sm font-medium text-gray-600">Охват общественных пространств</p>
+              <button
+                  onClick={() => setShowInfoPopup('coverage')}
+                  className="text-gray-400 hover:text-emerald-600 transition-colors duration-200"
+                  title="Подробнее о расчете охвата"
+              >
+                <Info className="w-4 h-4"/>
+              </button>
+            </div>
             <div className="flex items-center justify-between">
               <div>
-                <div className="flex items-center space-x-2">
-                  <p className="text-sm font-medium text-gray-600">Охват общественных пространств</p>
-                  <button
-                    onClick={() => setShowInfoPopup('coverage')}
-                    className="text-gray-400 hover:text-emerald-600 transition-colors duration-200"
-                    title="Подробнее о расчете охвата"
-                  >
-                    <Info className="w-4 h-4" />
-                  </button>
-                </div>
+
                 <p className="text-3xl font-bold text-gray-900">
                   {routeMetrics?.spacesServedByNewSolutions || '730'}
                 </p>
-                <p className="text-sm text-green-600 flex items-center mt-1">
-                  <TreePine className="w-4 h-4 mr-1" />
-                  Обслуживаемых объектов
-                </p>
+
               </div>
               <div className="w-12 h-12 bg-gradient-to-br from-green-100 to-green-200 rounded-xl flex items-center justify-center shadow-lg">
-                <TreePine className="w-6 h-6 text-green-600" />
+                <TreePine className="w-6 h-6 text-green-600"/>
               </div>
             </div>
+            <p className="text-sm text-green-600 flex items-center mt-1">
+              <TreePine className="w-4 h-4 mr-1"/>
+              Обслуживаемых объектов
+            </p>
           </div>
 
-          <div className="bg-white rounded-xl shadow-xl p-6 border border-gray-200 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 backdrop-blur-sm">
+          <div
+              className="bg-white rounded-xl shadow-xl p-6 border border-gray-200 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 backdrop-blur-sm">
+            <div className="flex items-center space-x-2">
+              <p className="text-sm font-medium text-gray-600">Общая длина</p>
+              <button
+                  onClick={() => setShowInfoPopup('total-length')}
+                  className="text-gray-400 hover:text-purple-600 transition-colors duration-200"
+                  title="Подробнее о расчете длины"
+              >
+                <Info className="w-4 h-4"/>
+              </button>
+            </div>
             <div className="flex items-center justify-between">
               <div>
-                <div className="flex items-center space-x-2">
-                  <p className="text-sm font-medium text-gray-600">Общая длина</p>
-                  <button
-                    onClick={() => setShowInfoPopup('total-length')}
-                    className="text-gray-400 hover:text-purple-600 transition-colors duration-200"
-                    title="Подробнее о расчете длины"
-                  >
-                    <Info className="w-4 h-4" />
-                  </button>
-                </div>
+
                 <p className="text-3xl font-bold text-gray-900">
                   {routeMetrics?.totalNewRoutesLength || '0.0'} км
                 </p>
-                <p className="text-sm text-green-600 flex items-center mt-1">
-                  <Target className="w-4 h-4 mr-1" />
-                  Новых маршрутов
-                </p>
+
               </div>
               <div className="w-12 h-12 bg-gradient-to-br from-green-100 to-green-200 rounded-xl flex items-center justify-center shadow-lg">
-                <Target className="w-6 h-6 text-green-600" />
+                <Target className="w-6 h-6 text-green-600"/>
               </div>
             </div>
+            <p className="text-sm text-green-600 flex items-center mt-1">
+              <Target className="w-4 h-4 mr-1"/>
+              Новых маршрутов
+            </p>
           </div>
 
-          <div className="bg-white rounded-xl shadow-xl p-6 border border-gray-200 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 backdrop-blur-sm">
+          <div
+              className="bg-white rounded-xl shadow-xl p-6 border border-gray-200 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 backdrop-blur-sm">
+            <div className="flex items-center space-x-2">
+              <p className="text-sm font-medium text-gray-600">Эффективность</p>
+              <button
+                  onClick={() => setShowInfoPopup('efficiency')}
+                  className="text-gray-400 hover:text-orange-600 transition-colors duration-200"
+                  title="Подробнее о расчете эффективности"
+              >
+                <Info className="w-4 h-4"/>
+              </button>
+            </div>
             <div className="flex items-center justify-between">
               <div>
-                <div className="flex items-center space-x-2">
-                  <p className="text-sm font-medium text-gray-600">Эффективность</p>
-                  <button
-                    onClick={() => setShowInfoPopup('efficiency')}
-                    className="text-gray-400 hover:text-orange-600 transition-colors duration-200"
-                    title="Подробнее о расчете эффективности"
-                  >
-                    <Info className="w-4 h-4" />
-                  </button>
-                </div>
+
                 <p className="text-3xl font-bold text-gray-900">+{routeMetrics?.improvementPercentage || '60'}%</p>
-                <p className="text-sm text-green-600 flex items-center mt-1">
-                  <TrendingUp className="w-4 h-4 mr-1" />
-                  Улучшение доступности
-                </p>
+
               </div>
               <div className="w-12 h-12 bg-gradient-to-br from-green-100 to-green-200 rounded-xl flex items-center justify-center shadow-lg">
-                <TrendingUp className="w-6 h-6 text-green-600" />
+                <TrendingUp className="w-6 h-6 text-green-600"/>
               </div>
             </div>
+            <p className="text-sm text-green-600 flex items-center mt-1">
+              <TrendingUp className="w-4 h-4 mr-1"/>
+              Улучшение доступности
+            </p>
           </div>
         </div>
 
@@ -973,7 +989,7 @@ export default function RecommendedRoutes() {
         <div className="flex-1 pb-6 pt-6 flex min-h-0 content-padding layout-flex">
           {/* Таблица маршрутов - 40% ширины */}
           <div className="w-2/5 h-full sidebar">
-            <RoutesTable onSelect={handleSelectRoute} selectedRoute={selectedRoute} routes={routes} loading={loading} error={error} />
+            <RoutesTable onSelect={handleSelectRoute} selectedRoute={selectedRoute} routes={routes} loading={loading} error={error}/>
           </div>
 
           {/* Карта - 60% ширины */}
@@ -995,9 +1011,9 @@ export default function RecommendedRoutes() {
           </div>
         </div>
       </div>
-      
+
       {/* Информационный поп-ап */}
       <InfoPopup />
     </Layout>
   );
-} 
+}

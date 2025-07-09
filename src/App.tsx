@@ -5,6 +5,7 @@ import Stats from "./pages/Stats";
 import DataTables from "./pages/DataTables";
 import RecommendedRoutes from "./pages/RecommendedRoutes";
 import NotFound from "./pages/NotFound";
+import './utils/res.css'
 
 export default function App() {
   return (

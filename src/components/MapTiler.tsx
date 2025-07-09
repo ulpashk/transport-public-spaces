@@ -11,30 +11,30 @@ import { getDisplayName } from "../utils/displayName";
 // Функция для валидации координат полигона
 function validatePolygonCoordinates(geometry: any): boolean {
   if (!geometry || !geometry.coordinates) return false;
-  
+
   if (geometry.type === "Polygon") {
-    return Array.isArray(geometry.coordinates) && 
+    return Array.isArray(geometry.coordinates) &&
            geometry.coordinates.length > 0 &&
            Array.isArray(geometry.coordinates[0]) &&
            geometry.coordinates[0].length >= 4;
   } else if (geometry.type === "MultiPolygon") {
     return Array.isArray(geometry.coordinates) &&
            geometry.coordinates.length > 0 &&
-           geometry.coordinates.every((polygon: any) => 
-             Array.isArray(polygon) && 
+           geometry.coordinates.every((polygon: any) =>
+             Array.isArray(polygon) &&
              polygon.length > 0 &&
              Array.isArray(polygon[0]) &&
              polygon[0].length >= 4
            );
   }
-  
+
   return false;
 }
 
 // Функция для создания содержимого popup
 function createPopupContent(feature: FeatureType): React.ReactNode {
   const props = feature.properties;
-  
+
   // Определяем иконку по типу объекта
   const getIcon = (type: string) => {
     switch (type) {
@@ -143,7 +143,7 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
 
   // MapTiler API key
   const MAPTILER_KEY = "h9AWBEaI4SyKaLbniSna";
-  
+
   // Список стилей для пробы (fallback)
   const mapStyles = [
     `https://api.maptiler.com/maps/streets/style.json?key=${MAPTILER_KEY}`,
@@ -169,7 +169,7 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
       ]
     }
   ];
-  
+
   const [currentStyleIndex, setCurrentStyleIndex] = useState(0);
   const mapStyle = mapStyles[currentStyleIndex];
 
@@ -179,12 +179,12 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
     fetch(`${basePath}final.geojson`)
       .then(res => res.json())
       .then(data => {
-        console.log("=== GEOJSON DATA LOADED ===");
-        console.log("Total features:", data.features.length);
-        
+        // console.log("=== GEOJSON DATA LOADED ===");
+        // console.log("Total features:", data.features.length);
+
         // ID маршрутов для исключения из отображения
         const excludedIds = [51, 42, 29, 3, 5];
-        
+
         // Фильтруем исключенные маршруты
         const filteredFeatures = data.features.filter((feature: any) => {
           const isRoute = ["Рекомендованный маршрут", "Удлинить маршрут", "Маршрут автобуса"].includes(feature.properties.type);
@@ -193,8 +193,8 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
           }
           return true;
         });
-        
-        console.log("Filtered features:", filteredFeatures.length);
+
+        // console.log("Filtered features:", filteredFeatures.length);
         setFeatures(filteredFeatures as FeatureType[]);
       })
       .catch(err => setError(err.message))
@@ -206,7 +206,7 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
     if (!selectedPark) {
       return null;
     }
-    
+
     // Если есть unique_id, используем его для точного поиска
     if (selectedPark.unique_id) {
       // Сначала ищем по точному unique_id
@@ -216,7 +216,7 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
           f.properties.unique_id === selectedPark.unique_id
       );
       if (found) return found;
-      
+
       // Если unique_id создан на основе id, ищем по id
       if (selectedPark.unique_id.startsWith('park_id_')) {
         const parkId = parseInt(selectedPark.unique_id.replace('park_id_', ''));
@@ -227,7 +227,7 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
         );
         if (found) return found;
       }
-      
+
       // Если unique_id создан на основе индекса, ищем по индексу
       if (selectedPark.unique_id.startsWith('park_index_')) {
         const parkIndex = parseInt(selectedPark.unique_id.replace('park_index_', ''));
@@ -237,7 +237,7 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
         }
       }
     }
-    
+
     // Fallback: поиск по имени и району (только если имя не "Без названия")
     if (selectedPark.parkName && selectedPark.parkName !== "Без названия") {
       let found = features.find(
@@ -246,7 +246,7 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
           f.properties.name === selectedPark.parkName &&
           f.properties.district === selectedPark.parkDistrict
       );
-      
+
       if (!found) {
         found = features.find(
           f =>
@@ -254,10 +254,10 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
             f.properties.name === selectedPark.parkName
         );
       }
-      
+
       return found;
     }
-    
+
     return null;
   }, [features, selectedPark]);
 
@@ -266,7 +266,7 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
     if (!selectedRoute) {
       return null;
     }
-    
+
     // Сначала ищем по уникальному ID если он есть
     if (selectedRoute.uniqueId !== null && selectedRoute.uniqueId !== undefined) {
       const found = features.find(
@@ -274,14 +274,14 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
       );
       if (found) return found;
     }
-    
+
     // Ищем точное совпадение по имени и типу
     let found = features.find(
       f =>
         f.properties.type === selectedRoute.routeType &&
         f.properties.name === selectedRoute.routeName
     );
-    
+
     if (!found) {
       // Если не найден, ищем по типу и району
       found = features.find(
@@ -290,7 +290,7 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
           f.properties.district === selectedRoute.routeDistrict
       );
     }
-    
+
     return found;
   }, [features, selectedRoute]);
 
@@ -305,7 +305,7 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
         f => f.properties.type.includes("Остановка") && stopIds.includes(f.properties.id)
       );
     }
-    
+
     // Если выбран маршрут - показываем все остановки на пути
     if (selectedRouteFeature) {
       const stopIds = (selectedRouteFeature.properties.nearest_stop_ids ?? []).concat(
@@ -315,7 +315,7 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
         f => f.properties.type.includes("Остановка") && stopIds.includes(f.properties.id)
       );
     }
-    
+
     return [];
   }, [features, selectedParkFeature, selectedRouteFeature, visibleTypes]);
 
@@ -336,15 +336,15 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
           ids.includes(f.properties.id)
       );
     }
-    
+
     // Если выбран маршрут - показываем сам маршрут и связанные маршруты
     if (selectedRouteFeature) {
       let routesToShow = [selectedRouteFeature];
-      
+
       // Если это удлинение маршрута, показываем также оригинальный маршрут по номеру
       if (selectedRouteFeature.properties.type === "Удлинить маршрут") {
         const extensionRouteNumber = extractRouteNumber(selectedRouteFeature.properties.name);
-        
+
         if (extensionRouteNumber) {
           // Ищем оригинальный маршрут с тем же номером
           const originalRoutes = features.filter(f => {
@@ -355,11 +355,11 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
           routesToShow = routesToShow.concat(originalRoutes);
         }
       }
-      
-      // Если это рекомендованный маршрут, показываем также связанные маршруты с тем же номером  
+
+      // Если это рекомендованный маршрут, показываем также связанные маршруты с тем же номером
       if (selectedRouteFeature.properties.type === "Рекомендованный маршрут") {
         const recommendedRouteNumber = extractRouteNumber(selectedRouteFeature.properties.name);
-        
+
         if (recommendedRouteNumber) {
           // Ищем оригинальные и удлиненные маршруты с тем же номером
           const relatedRoutes = features.filter(f => {
@@ -370,19 +370,19 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
           routesToShow = routesToShow.concat(relatedRoutes);
         }
       }
-      
+
       return routesToShow;
     }
-    
+
     return [];
   }, [features, selectedParkFeature, selectedRouteFeature, visibleTypes]);
 
   // Общественные пространства рядом с выбранным маршрутом
   const parksNearby = useMemo(() => {
     if (!selectedRouteFeature) return [];
-    
+
     // Ищем все парки, которые пересекает маршрут
-    return features.filter(f => 
+    return features.filter(f =>
       f.properties.type === "Озеленение" &&
       (f.properties.nearby_route_ids?.includes(selectedRouteFeature.properties.id) ||
        f.properties.nearby_rec_route_ids?.includes(selectedRouteFeature.properties.id) ||
@@ -400,28 +400,28 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
       if (selectedRouteFeature) {
         // Если включен режим "показать все для типов легенды", показываем все остановки и парки + связанные с маршрутом
         if (showAllForLegendTypes && allowedLegendTypes) {
-          const allLegendPoints = features.filter(f => 
-            f.geometry.type === "Point" && 
+          const allLegendPoints = features.filter(f =>
+            f.geometry.type === "Point" &&
             allowedLegendTypes.includes(f.properties.type) &&
             visibleTypes.includes(f.properties.type)
           );
           return allLegendPoints;
         }
         // Иначе показываем только связанные остановки
-        return stopsNearby.filter(f => 
-          f.geometry.type === "Point" && 
+        return stopsNearby.filter(f =>
+          f.geometry.type === "Point" &&
           visibleTypes.includes(f.properties.type)
         );
       }
-      
+
       // Если выбран парк, показываем только связанные остановки
       if (selectedParkFeature) {
-        return stopsNearby.filter(f => 
-          f.geometry.type === "Point" && 
+        return stopsNearby.filter(f =>
+          f.geometry.type === "Point" &&
           visibleTypes.includes(f.properties.type)
         );
       }
-      
+
       // Обычный режим - показываем все по типам
       return features.filter(
         f =>
@@ -431,29 +431,29 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
     },
     [features, visibleTypes, selectedRouteFeature, selectedParkFeature, stopsNearby, showAllForLegendTypes, allowedLegendTypes]
   );
-  
+
   const lines = useMemo(
     () => {
       // Если выбран маршрут, показываем ТОЛЬКО выбранный маршрут и связанные (игнорируем visibleTypes для маршрутов)
       if (selectedRouteFeature) {
-        return routesNearby.filter(f => 
+        return routesNearby.filter(f =>
           f.geometry.type === "LineString" || f.geometry.type === "MultiLineString"
         );
       }
-      
+
       // Если выбран парк, показываем только связанные маршруты
       if (selectedParkFeature) {
-        return routesNearby.filter(f => 
+        return routesNearby.filter(f =>
           (f.geometry.type === "LineString" || f.geometry.type === "MultiLineString") &&
           visibleTypes.includes(f.properties.type)
         );
       }
-      
+
       // Обычный режим - НЕ показываем маршруты если используется showAllForLegendTypes
       if (showAllForLegendTypes && allowedLegendTypes) {
         return []; // Не показываем маршруты в обычном режиме на странице рекомендаций
       }
-      
+
       return features.filter(
         f =>
           visibleTypes.includes(f.properties.type) &&
@@ -463,34 +463,34 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
     },
     [features, visibleTypes, selectedRouteFeature, selectedParkFeature, routesNearby, showAllForLegendTypes, allowedLegendTypes]
   );
-  
+
   const polygons = useMemo(
     () => {
       // Если выбран маршрут
       if (selectedRouteFeature) {
         // Если включен режим "показать все для типов легенды", показываем все парки
         if (showAllForLegendTypes && allowedLegendTypes) {
-          return features.filter(f => 
+          return features.filter(f =>
             (f.geometry.type === "Polygon" || f.geometry.type === "MultiPolygon") &&
             allowedLegendTypes.includes(f.properties.type) &&
             visibleTypes.includes(f.properties.type)
           );
         }
         // Иначе показываем только связанные парки
-        return parksNearby.filter(f => 
+        return parksNearby.filter(f =>
           (f.geometry.type === "Polygon" || f.geometry.type === "MultiPolygon") &&
           visibleTypes.includes(f.properties.type)
         );
       }
-      
+
       // Если выбран парк, показываем только выбранный парк
       if (selectedParkFeature) {
-        return [selectedParkFeature].filter(f => 
+        return [selectedParkFeature].filter(f =>
           (f.geometry.type === "Polygon" || f.geometry.type === "MultiPolygon") &&
           visibleTypes.includes(f.properties.type)
         );
       }
-      
+
       // Обычный режим
       return features.filter(
         f =>
@@ -516,7 +516,7 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
   // Функция для получения начальной точки маршрута
   const getRouteStartPoint = (routeFeature: FeatureType): [number, number] | null => {
     const geometry = routeFeature.geometry;
-    
+
     if (geometry.type === "LineString") {
       // Для LineString берем первую точку
       return geometry.coordinates[0] as [number, number];
@@ -526,14 +526,14 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
         return geometry.coordinates[0][0] as [number, number];
       }
     }
-    
+
     return null;
   };
 
   // Функция для вычисления границ объекта с отступами и связанными объектами
   const calculateBounds = (mainFeature: FeatureType, relatedFeatures: FeatureType[] = []) => {
     let allCoords: [number, number][] = [];
-    
+
     // Функция для извлечения координат из геометрии
     const extractCoords = (geometry: any) => {
       if (geometry.type === "Point") {
@@ -549,29 +549,29 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
       }
       return [];
     };
-    
+
     // Добавляем координаты основного объекта
     allCoords = allCoords.concat(extractCoords(mainFeature.geometry));
-    
+
     // Добавляем координаты связанных объектов
     relatedFeatures.forEach(feature => {
       allCoords = allCoords.concat(extractCoords(feature.geometry));
     });
-    
+
     if (allCoords.length === 0) return null;
-    
+
     const lngs = allCoords.map(coord => coord[0]);
     const lats = allCoords.map(coord => coord[1]);
-    
+
     const minLng = Math.min(...lngs);
     const maxLng = Math.max(...lngs);
     const minLat = Math.min(...lats);
     const maxLat = Math.max(...lats);
-    
+
     // Добавляем отступы (padding) вокруг области для лучшего контекста
     const lngPadding = Math.max((maxLng - minLng) * 0.3, 0.008); // Минимум 0.008 для контекста города
     const latPadding = Math.max((maxLat - minLat) * 0.3, 0.008); // Минимум 0.008 для контекста города
-    
+
     return {
       center: [(minLng + maxLng) / 2, (minLat + maxLat) / 2] as [number, number],
       bounds: [
@@ -584,11 +584,11 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
   // Эффект для сброса карты при изменении выбранного объекта
   useEffect(() => {
     setMapKey(prev => prev + 1);
-    
+
     setTimeout(() => {
       if (selectedParkFeature && mapRef.current) {
         const bounds = calculateBounds(selectedParkFeature, stopsNearby);
-        
+
         if (bounds) {
           // Используем fitBounds для показа парка с контекстом
           mapRef.current.fitBounds(bounds.bounds, {
@@ -600,7 +600,7 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
       } else if (selectedRouteFeature && mapRef.current) {
         // Зуммируемся к началу маршрута
         const startPoint = getRouteStartPoint(selectedRouteFeature);
-        
+
         if (startPoint) {
           mapRef.current.flyTo({
             center: startPoint,
@@ -621,7 +621,7 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
   // Функция переключения 3D режима
   const toggle3D = () => {
     if (!mapRef.current) return;
-    
+
     const map = mapRef.current.getMap();
     const visibility = is3D ? "none" : "visible";
     setIs3D(!is3D);
@@ -650,7 +650,7 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
     if (feature) {
       // Получаем координаты клика
       const { lng, lat } = event.lngLat;
-      
+
       setPopupInfo({
         feature: feature as FeatureType,
         longitude: lng,
@@ -668,16 +668,16 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
       </div>
     );
   }
-  
+
   if (error) {
     return <div className="p-4 text-red-600">Ошибка: {error}</div>;
   }
 
   return (
-    <div className="w-full h-full flex flex-col">
+    <div className="w-full h-full flex flex-col block_with_map">
       {/* Легенда сверху карты */}
       {!hideLegend && (
-        <div className="flex-shrink-0">
+        <div className="flex-shrink-0 button_map_wrap">
           <LegendOverlay
             items={legendItems.filter(item => {
               if (allowedLegendTypes) {
@@ -705,7 +705,7 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
           attributionControl={false}
           interactiveLayerIds={[
             'points-layer',
-            'lines-layer', 
+            'lines-layer',
             'polygons-layer',
             'selected-park-layer',
             'stops-nearby-layer',
@@ -716,15 +716,15 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
             console.error('Map component error:', e);
             // Если есть ошибка и не достигли последнего стиля, пробуем следующий
             if (currentStyleIndex < mapStyles.length - 1) {
-              console.log(`Trying fallback style ${currentStyleIndex + 1}`);
+              // console.log(`Trying fallback style ${currentStyleIndex + 1}`);
               setCurrentStyleIndex(prev => prev + 1);
             }
           }}
           onLoad={() => {
             const map = mapRef.current?.getMap();
             if (map) {
-              console.log("Map loaded successfully");
-              
+              // console.log("Map loaded successfully");
+
               // Обработка отсутствующих изображений
               map.on('styleimagemissing', (e) => {
                 console.warn('Missing image:', e.id);
@@ -741,27 +741,27 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
                 const imageData = context.getImageData(0, 0, 64, 64);
                 map.addImage(e.id, imageData);
               });
-              
+
               // Обработка ошибок карты
               map.on('error', (e) => {
                 console.error('Map error:', e);
                 // Если есть ошибка и не достигли последнего стиля, пробуем следующий
                 if (currentStyleIndex < mapStyles.length - 1) {
-                  console.log(`Trying fallback style ${currentStyleIndex + 1}`);
+                  // console.log(`Trying fallback style ${currentStyleIndex + 1}`);
                   setCurrentStyleIndex(prev => prev + 1);
                 }
               });
-              
+
               // Ждем пока стиль полностью загрузится
               map.on('styledata', () => {
-                console.log("Style loaded");
+                // console.log("Style loaded");
                 try {
                   // Проверяем есть ли уже слой 3D зданий
                   if (!map.getLayer("3d-buildings")) {
                     // Добавляем 3D здания только если есть нужный источник
                     const sources = map.getStyle().sources;
-                    console.log("Available sources:", Object.keys(sources));
-                    
+                    // console.log("Available sources:", Object.keys(sources));
+
                     // Пробуем разные возможные источники для зданий
                     let buildingSource = null;
                     if (sources['openmaptiles']) {
@@ -771,9 +771,9 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
                     } else if (sources['composite']) {
                       buildingSource = 'composite';
                     }
-                    
+
                     if (buildingSource) {
-                      console.log("Adding 3D buildings with source:", buildingSource);
+                      // console.log("Adding 3D buildings with source:", buildingSource);
                       map.addLayer({
                         id: "3d-buildings",
                         source: buildingSource,
@@ -831,9 +831,9 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
         >
           {/* Выбранный парк */}
           {selectedPark && showSelectedPark && (
-            <Source 
-              id="selected-park" 
-              type="geojson" 
+            <Source
+              id="selected-park"
+              type="geojson"
               data={{
                 type: "FeatureCollection",
                 features: [selectedParkFeature!]
@@ -861,9 +861,9 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
 
           {/* Остановки рядом с выбранным парком */}
           {selectedPark && stopsNearby.length > 0 && (
-            <Source 
-              id="stops-nearby" 
-              type="geojson" 
+            <Source
+              id="stops-nearby"
+              type="geojson"
               data={getGeoJSONData(stopsNearby)}
             >
               <Layer
@@ -886,9 +886,9 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
 
           {/* Маршруты рядом с выбранным парком */}
           {selectedPark && routesNearby.length > 0 && (
-            <Source 
-              id="routes-nearby" 
-              type="geojson" 
+            <Source
+              id="routes-nearby"
+              type="geojson"
               data={getGeoJSONData(routesNearby)}
             >
               <Layer
@@ -913,9 +913,9 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
 
           {/* Обычный режим - точки */}
           {!selectedPark && points.length > 0 && (
-            <Source 
-              id="points" 
-              type="geojson" 
+            <Source
+              id="points"
+              type="geojson"
               data={getGeoJSONData(points)}
             >
               <Layer
@@ -940,9 +940,9 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
 
           {/* Обычный режим - линии */}
           {!selectedPark && lines.length > 0 && (
-            <Source 
-              id="lines" 
-              type="geojson" 
+            <Source
+              id="lines"
+              type="geojson"
               data={getGeoJSONData(lines)}
             >
               <Layer
@@ -968,9 +968,9 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
 
           {/* Обычный режим - полигоны */}
           {!selectedPark && polygons.length > 0 && (
-            <Source 
-              id="polygons" 
-              type="geojson" 
+            <Source
+              id="polygons"
+              type="geojson"
               data={getGeoJSONData(polygons.filter(f => validatePolygonCoordinates(f.geometry)))}
             >
               <Layer
@@ -1025,17 +1025,17 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
             </Popup>
           )}
         </Map>
-        
+
         {/* Управляющие элементы */}
         <FloatingControls
           onZoomIn={() => mapRef.current?.zoomIn()}
           onZoomOut={() => mapRef.current?.zoomOut()}
           onRecenter={() => mapRef.current?.flyTo({ center: [76.8897, 43.2389], zoom: 12 })}
           onMyLocation={() =>
-            navigator.geolocation?.getCurrentPosition(pos => 
-              mapRef.current?.flyTo({ 
-                center: [pos.coords.longitude, pos.coords.latitude], 
-                zoom: 15 
+            navigator.geolocation?.getCurrentPosition(pos =>
+              mapRef.current?.flyTo({
+                center: [pos.coords.longitude, pos.coords.latitude],
+                zoom: 15
               })
             )
           }
@@ -1081,4 +1081,4 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
       </div>
     </div>
   );
-} 
+}

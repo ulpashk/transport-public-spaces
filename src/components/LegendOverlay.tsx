@@ -1,10 +1,10 @@
 import React from 'react';
-import { 
-  MapPin, 
-  Navigation, 
-  Route, 
-  Trees, 
-  Waves, 
+import {
+  MapPin,
+  Navigation,
+  Route,
+  Trees,
+  Waves,
   Circle,
   Map as MapIcon,
   ArrowUp
@@ -26,13 +26,13 @@ const LegendOverlay: React.FC<LegendOverlayProps> = ({
   items,
   onToggleVisibility
 }) => {
-  
+
   // Определяем иконки для разных типов объектов
   const getIcon = (type: string, color: string) => {
     const iconProps = {
       size: 18,
       strokeWidth: 2.5,
-      style: { 
+      style: {
         color: color + ' !important',
         fill: 'currentColor',
         stroke: 'currentColor'
@@ -69,7 +69,7 @@ const LegendOverlay: React.FC<LegendOverlayProps> = ({
       case "Рекомендованный маршрут":
         return "Рек. маршрут";
       case "Удлинить маршрут":
-        return "Удлинить";
+        return "Рек. Удлинения";
       case "Остановка":
         return "Остановка";
       case "Рекомендованная остановка":
@@ -87,7 +87,7 @@ const LegendOverlay: React.FC<LegendOverlayProps> = ({
 
   return (
     <div className="bg-white rounded-t-lg shadow-sm border border-gray-100 border-b-0 overflow-hidden">
-      <div className="flex w-full">
+      <div className="flex w-full wrapper_button">
         {items.map((item, index) => (
           <button
             key={item.type}
@@ -105,13 +105,13 @@ const LegendOverlay: React.FC<LegendOverlayProps> = ({
             `}
             style={{
               backgroundColor: item.visible ? item.color : '#ffffff',
-              color: item.visible ? 'white !important' : '#374151 !important',
+              color: item.visible ? '#00000080' : item.color,
               outline: 'none'
             }}
             title={`${item.type} (${item.count})`}
           >
             {/* Иконка */}
-            <div 
+            <div
               className="flex items-center justify-center leading-none mb-2"
               style={{
                 color: item.visible ? 'white !important' : item.color + ' !important',
@@ -119,8 +119,8 @@ const LegendOverlay: React.FC<LegendOverlayProps> = ({
                 stroke: item.visible ? 'white' : item.color
               }}
             >
-              <div 
-                style={{ 
+              <div
+                style={{
                   color: item.visible ? 'white !important' : item.color + ' !important',
                   fill: item.visible ? 'white !important' : item.color + ' !important',
                   stroke: item.visible ? 'white !important' : item.color + ' !important'
@@ -129,9 +129,9 @@ const LegendOverlay: React.FC<LegendOverlayProps> = ({
                 {getIcon(item.type, item.visible ? 'white' : item.color)}
               </div>
             </div>
-            
+
             {/* Название без цифр */}
-            <div 
+            <div
               className="text-xs font-semibold text-center leading-tight"
               style={{
                 color: item.visible ? 'white !important' : '#1f2937 !important'
@@ -139,10 +139,10 @@ const LegendOverlay: React.FC<LegendOverlayProps> = ({
             >
               {getShortName(item.type)}
             </div>
-            
+
             {/* Активный индикатор */}
             {item.visible && (
-              <div 
+              <div
                 className="absolute bottom-0 left-0 right-0 h-1"
                 style={{
                   backgroundColor: 'rgba(255, 255, 255, 0.3)'
@@ -162,7 +162,7 @@ export default LegendOverlay;
 export const generateLegendColors = () => {
   return {
     'Маршрут автобуса': '#3B82F6',
-    'Рекомендованный маршрут': '#10B981', 
+    'Рекомендованный маршрут': '#10B981',
     'Удлинить маршрут': '#F59E0B',
     'Остановка': '#EF4444',
     'Рекомендованная остановка': '#8B5CF6',

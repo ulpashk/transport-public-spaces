@@ -35,8 +35,8 @@ export default function NearestStopsTable({ onSelect, selectedPark }: NearestSto
       .then(res => res.json())
       .then(data => {
         const greens = data.features.filter(
-          (f: any) => f.properties.type === "Озеленение" && 
-          f.properties.distance_to_stop !== null && 
+          (f: any) => f.properties.type === "Озеленение" &&
+          f.properties.distance_to_stop !== null &&
           !isNaN(parseInt(f.properties.distance_to_stop)) &&
           parseInt(f.properties.distance_to_stop) <= 750
         );
@@ -47,11 +47,11 @@ export default function NearestStopsTable({ onSelect, selectedPark }: NearestSto
             // Если нет unique_id, создаем на основе id или индекса
             uniqueId = park.properties.id ? `park_id_${park.properties.id}` : `park_index_${index}`;
           }
-          
+
           return {
             id: park.properties.id ?? null,
             parkName: getDisplayName(park.properties.name),
-            parkDistrict: park.properties.district || "Неизвестно", 
+            parkDistrict: park.properties.district || "Неизвестно",
             distance: park.properties.distance_to_stop ?? null,
             unique_id: uniqueId,
           };
@@ -63,8 +63,8 @@ export default function NearestStopsTable({ onSelect, selectedPark }: NearestSto
       .finally(() => setLoading(false));
   }, []);
 
-    const filteredRows = search 
-    ? rows.filter(row => 
+    const filteredRows = search
+    ? rows.filter(row =>
         row.parkName.toLowerCase().includes(search.toLowerCase()) ||
         (row.id !== null && row.id.toString().includes(search))
       )
@@ -154,17 +154,17 @@ export default function NearestStopsTable({ onSelect, selectedPark }: NearestSto
     <div className="bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-lg border border-gray-200 overflow-hidden h-full flex flex-col">
       {/* Заголовок с градиентом */}
       <div className="bg-gradient-to-r from-green-600 to-emerald-600 px-6 py-4">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between " id={'block_search'}>
           <div className="text-white">
             <div className="flex items-center space-x-3">
               <MapPin className="w-5 h-5" />
-              <h2 className="text-lg font-semibold">Ближайшие остановки к общественным пространствам</h2>
+              <h2 className="text-lg font-semibold title_text_head">Ближайшие остановки к общественным пространствам</h2>
             </div>
-            <p className="text-green-100 mt-2 text-sm">
+            <p className="text-green-100 mt-0 text-sm">
               Анализ транспортной доступности {sortedRows.length} общественных пространств города
             </p>
           </div>
-          
+
           {/* Поиск с иконкой */}
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -186,8 +186,8 @@ export default function NearestStopsTable({ onSelect, selectedPark }: NearestSto
           <table className="min-w-full">
             <thead className="bg-gradient-to-r from-gray-50 to-gray-100 sticky top-0 z-10 border-b border-gray-200">
               <tr>
-                <th 
-                  className="group cursor-pointer px-6 py-4 text-left font-semibold text-gray-700 text-base hover:bg-gray-200 transition-colors duration-200" 
+                <th
+                  className="group cursor-pointer px-6 py-4 text-left font-semibold text-gray-700 text-base hover:bg-gray-200 transition-colors duration-200"
                   onClick={() => handleSort("id")}
                 >
                   <div className="flex items-center space-x-2">
@@ -197,30 +197,30 @@ export default function NearestStopsTable({ onSelect, selectedPark }: NearestSto
                     </div>
                   </div>
                 </th>
-                <th 
-                  className="group cursor-pointer px-6 py-4 text-left font-semibold text-gray-700 text-base hover:bg-gray-200 transition-colors duration-200" 
+                <th
+                  className="group cursor-pointer px-2 py-2 text-left font-semibold text-gray-700 text-base hover:bg-gray-200 transition-colors duration-200"
                   onClick={() => handleSort("parkName")}
                 >
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-1">
                     <span>Название общественного пространства</span>
                     <div className="text-gray-400 text-lg">
                       {sortKey === "parkName" ? (sortOrder === "asc" ? "▲" : "▼") : "⇅"}
                     </div>
                   </div>
                 </th>
-                <th 
-                  className="group cursor-pointer px-6 py-4 text-left font-semibold text-gray-700 text-base hover:bg-gray-200 transition-colors duration-200" 
+                <th
+                  className="text_center group cursor-pointer px-6 py-4 text-left font-semibold text-gray-700 text-base hover:bg-gray-200 transition-colors duration-200"
                   onClick={() => handleSort("parkDistrict")}
                 >
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-2 ">
                     <span>Район</span>
-                    <div className="text-gray-400 text-lg">
+                    <div className="text-gray-400 text-ы ">
                       {sortKey === "parkDistrict" ? (sortOrder === "asc" ? "▲" : "▼") : "⇅"}
                     </div>
                   </div>
                 </th>
-                <th 
-                  className="group cursor-pointer px-6 py-4 text-center font-semibold text-gray-700 text-base hover:bg-gray-200 transition-colors duration-200" 
+                <th
+                  className="group cursor-pointer px-6 py-4 text-center font-semibold text-gray-700 text-base hover:bg-gray-200 transition-colors duration-200"
                   onClick={() => handleSort("distance")}
                 >
                   <div className="flex items-center justify-center space-x-2">
@@ -299,14 +299,14 @@ export default function NearestStopsTable({ onSelect, selectedPark }: NearestSto
           >
             ← Назад
           </button>
-          
+
           <div className="flex flex-col sm:flex-row items-center gap-4">
             <div className="flex items-center space-x-2 text-sm text-gray-600 font-medium">
               <span>Стр. {currentPage} из {pageCount}</span>
               <span className="text-gray-400">•</span>
               <span>{sortedRows.length} объектов</span>
             </div>
-            
+
             <div className="flex items-center space-x-2">
               <span className="text-sm text-gray-600 font-medium">Стр.:</span>
               <input
@@ -328,7 +328,7 @@ export default function NearestStopsTable({ onSelect, selectedPark }: NearestSto
               </button>
             </div>
           </div>
-          
+
           <button
             onClick={handleNext}
             disabled={startIdx + rowsPerPage >= sortedRows.length}
