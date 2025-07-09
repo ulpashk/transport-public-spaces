@@ -202,6 +202,7 @@ body {
   font-size: 1.5rem !important; /* text-2xl - компактно для ноутбуков */
 }
 
+
 .header p {
   font-size: 1rem !important; /* text-base */
 }
@@ -231,23 +232,23 @@ body {
   .header h2 {
     font-size: 1.875rem !important; /* text-3xl */
   }
-  
+
   .content-padding {
     padding: 1.5rem !important; /* p-6 */
   }
-  
+
   .stats-grid {
     gap: 1.5rem !important; /* gap-6 */
   }
-  
+
   .layout-flex {
     gap: 1.5rem !important;
   }
-  
+
   .map-container {
     height: 500px !important;
   }
-  
+
   .sidebar {
     width: 280px !important;
   }
@@ -258,27 +259,27 @@ body {
   .header h2 {
     font-size: 2.25rem !important; /* text-4xl */
   }
-  
+
   .header p {
     font-size: 1.125rem !important; /* text-lg */
   }
-  
+
   .content-padding {
     padding: 2rem !important; /* p-8 */
   }
-  
+
   .stats-grid {
     gap: 2rem !important; /* gap-8 */
   }
-  
+
   .layout-flex {
     gap: 2rem !important;
   }
-  
+
   .map-container {
     height: 600px !important;
   }
-  
+
   .sidebar {
     width: 320px !important;
   }
@@ -289,20 +290,20 @@ body {
   .header h2 {
     font-size: 1.25rem !important; /* text-xl */
   }
-  
+
   .header p {
     font-size: 0.875rem !important; /* text-sm */
   }
-  
+
   .stats-grid {
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 0.75rem !important; /* gap-3 */
   }
-  
+
   .sidebar {
     width: 220px !important;
   }
-  
+
   .map-container {
     height: 350px !important;
   }
@@ -313,20 +314,21 @@ body {
     grid-template-columns: 1fr !important;
     gap: 0.5rem !important; /* gap-2 */
   }
-  
+
   .layout-flex {
     flex-direction: column !important;
   }
-  
+
   .map-container {
     height: 300px !important;
   }
-  
+
   .mobile-padding {
     @apply px-4;
   }
-  
+
   .mobile-text {
     @apply text-sm;
   }
 }
+
