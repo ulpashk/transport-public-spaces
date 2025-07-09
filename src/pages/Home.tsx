@@ -398,7 +398,7 @@ export default function Home() {
         </div>
 
         {/* Таблица слева и карта справа на одном уровне */}
-        <div className="flex-1 pb-6 pt-6 flex min-h-0 content-padding stats-grid">
+        <div className="flex-1 pb-6 pt-6 flex min-h-0 content-padding layout-flex">
           {/* Таблица - 40% ширины */}
           <div className="w-2/5 h-full bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden backdrop-blur-sm sidebar">
             <NearestStopsTable onSelect={handleSelectPark} selectedPark={selectedPark} />
