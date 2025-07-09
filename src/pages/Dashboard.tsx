@@ -221,22 +221,22 @@ export default function Dashboard() {
         ))}
       </div>
 
-      {/* Карта слева и таблица справа на одном уровне */}
-      <div className="flex gap-6 h-[600px]">
-        {/* Карта - 2/3 ширины */}
-        <div className="flex-[2] bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+      {/* Таблица слева и карта справа на одном уровне */}
+      <div className="flex h-[600px] content-padding layout-flex">
+        {/* Таблица - 40% ширины */}
+        <div className="w-2/5 bg-white rounded-lg shadow-sm border border-gray-200 sidebar">
+          <NearestStopsTable 
+            selectedPark={selectedPark}
+            onSelect={setSelectedPark}
+          />
+        </div>
+
+        {/* Карта - 60% ширины */}
+        <div className="w-3/5 bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden map-container">
           <MapTiler
             selectedPark={selectedPark}
             visibleTypes={visibleTypes}
             onToggleVisibility={handleToggleVisibility}
-          />
-        </div>
-
-        {/* Таблица - 1/3 ширины */}
-        <div className="flex-1 bg-white rounded-lg shadow-sm border border-gray-200">
-          <NearestStopsTable 
-            selectedPark={selectedPark}
-            onSelect={setSelectedPark}
           />
         </div>
       </div>
