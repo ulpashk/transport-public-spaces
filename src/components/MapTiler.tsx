@@ -174,9 +174,7 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
   const mapStyle = mapStyles[currentStyleIndex];
 
   useEffect(() => {
-    // Получаем base path из vite config или используем по умолчанию
-    const basePath = import.meta.env.BASE_URL || '/';
-    fetch(`${basePath}final.geojson`)
+    fetch("/final.geojson")
       .then(res => res.json())
       .then(data => {
         console.log("=== GEOJSON DATA LOADED ===");

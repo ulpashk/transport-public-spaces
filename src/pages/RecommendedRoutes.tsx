@@ -348,8 +348,7 @@ export default function RecommendedRoutes() {
     const loadRoutes = async () => {
       try {
         setLoading(true);
-        const basePath = import.meta.env.BASE_URL || '/';
-        const response = await fetch(`${basePath}final.geojson`);
+        const response = await fetch('/final.geojson');
         if (!response.ok) {
           throw new Error('Не удалось загрузить данные');
         }

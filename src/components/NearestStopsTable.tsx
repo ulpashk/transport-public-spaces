@@ -30,8 +30,7 @@ export default function NearestStopsTable({ onSelect, selectedPark }: NearestSto
   const rowsPerPage = 10;
 
   useEffect(() => {
-    const basePath = import.meta.env.BASE_URL || '/';
-    fetch(`${basePath}final.geojson`)
+    fetch("/final.geojson")
       .then(res => res.json())
       .then(data => {
         const greens = data.features.filter(
