@@ -205,3 +205,82 @@ body {
     @apply text-sm;
   }
 }
+
+/* Responsive design improvements for different screen sizes */
+@media (max-width: 1280px) {
+  .header h2 {
+    font-size: 1.875rem !important; /* text-3xl instead of text-4xl */
+  }
+  
+  .content-padding {
+    padding: 1.5rem !important; /* p-6 instead of p-8 */
+  }
+  
+  .stats-grid {
+    gap: 1.5rem !important; /* gap-6 instead of gap-8 */
+  }
+}
+
+@media (max-width: 1024px) {
+  .header h2 {
+    font-size: 1.5rem !important; /* text-2xl */
+  }
+  
+  .header p {
+    font-size: 1rem !important; /* text-base */
+  }
+  
+  .map-container {
+    height: 400px !important;
+  }
+  
+  .sidebar {
+    width: 288px !important; /* 18rem instead of 20rem */
+  }
+}
+
+@media (width: 1024px) and (height: 768px) {
+  .header h2 {
+    font-size: 1.5rem !important;
+  }
+  
+  .content-padding {
+    padding: 1rem !important;
+  }
+  
+  .stats-grid {
+    gap: 1rem !important;
+  }
+  
+  .map-container {
+    height: 350px !important;
+  }
+  
+  .sidebar {
+    width: 256px !important; /* 16rem */
+  }
+}
+
+@media (max-width: 768px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  
+  .sidebar {
+    width: 256px !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .stats-grid {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .layout-flex {
+    flex-direction: column !important;
+  }
+  
+  .map-container {
+    height: 300px !important;
+  }
+}
