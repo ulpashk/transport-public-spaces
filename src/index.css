@@ -195,85 +195,111 @@ body {
   background: #a0aec0;
 }
 
-/* Адаптивные утилиты */
-@media (max-width: 640px) {
-  .mobile-padding {
-    @apply px-4;
-  }
-  
-  .mobile-text {
-    @apply text-sm;
-  }
+/* Laptop-first responsive design - базовые размеры для ноутбуков */
+
+/* Базовые размеры оптимизированы для ноутбуков 14-15" (1366x768, 1920x1080) */
+.header h2 {
+  font-size: 1.5rem !important; /* text-2xl - компактно для ноутбуков */
 }
 
-/* Responsive design improvements for different screen sizes */
-@media (max-width: 1280px) {
+.header p {
+  font-size: 1rem !important; /* text-base */
+}
+
+.content-padding {
+  padding: 1rem !important; /* p-4 - компактные отступы */
+}
+
+.stats-grid {
+  gap: 1rem !important; /* gap-4 - меньшие промежутки */
+}
+
+.map-container {
+  height: 400px !important; /* оптимально для ноутбуков */
+}
+
+.sidebar {
+  width: 280px !important; /* компактный sidebar */
+}
+
+/* Увеличиваем для больших мониторов (≥1440px) */
+@media (min-width: 1440px) {
   .header h2 {
-    font-size: 1.875rem !important; /* text-3xl instead of text-4xl */
+    font-size: 1.875rem !important; /* text-3xl */
   }
   
   .content-padding {
-    padding: 1.5rem !important; /* p-6 instead of p-8 */
+    padding: 1.5rem !important; /* p-6 */
   }
   
   .stats-grid {
-    gap: 1.5rem !important; /* gap-6 instead of gap-8 */
+    gap: 1.5rem !important; /* gap-6 */
+  }
+  
+  .map-container {
+    height: 500px !important;
+  }
+  
+  .sidebar {
+    width: 320px !important;
   }
 }
 
-@media (max-width: 1024px) {
+/* Еще больше для очень больших мониторов (≥1920px, 27"+) */
+@media (min-width: 1920px) {
   .header h2 {
-    font-size: 1.5rem !important; /* text-2xl */
+    font-size: 2.25rem !important; /* text-4xl */
   }
   
   .header p {
-    font-size: 1rem !important; /* text-base */
-  }
-  
-  .map-container {
-    height: 400px !important;
-  }
-  
-  .sidebar {
-    width: 288px !important; /* 18rem instead of 20rem */
-  }
-}
-
-@media (width: 1024px) and (height: 768px) {
-  .header h2 {
-    font-size: 1.5rem !important;
+    font-size: 1.125rem !important; /* text-lg */
   }
   
   .content-padding {
-    padding: 1rem !important;
+    padding: 2rem !important; /* p-8 */
   }
   
   .stats-grid {
-    gap: 1rem !important;
+    gap: 2rem !important; /* gap-8 */
   }
   
   .map-container {
-    height: 350px !important;
+    height: 600px !important;
   }
   
   .sidebar {
-    width: 256px !important; /* 16rem */
+    width: 360px !important;
   }
 }
 
+/* Мобильные устройства - уменьшаем еще больше */
 @media (max-width: 768px) {
+  .header h2 {
+    font-size: 1.25rem !important; /* text-xl */
+  }
+  
+  .header p {
+    font-size: 0.875rem !important; /* text-sm */
+  }
+  
   .stats-grid {
     grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.75rem !important; /* gap-3 */
   }
   
   .sidebar {
     width: 256px !important;
+  }
+  
+  .map-container {
+    height: 350px !important;
   }
 }
 
 @media (max-width: 640px) {
   .stats-grid {
     grid-template-columns: 1fr !important;
+    gap: 0.5rem !important; /* gap-2 */
   }
   
   .layout-flex {
@@ -282,5 +308,13 @@ body {
   
   .map-container {
     height: 300px !important;
+  }
+  
+  .mobile-padding {
+    @apply px-4;
+  }
+  
+  .mobile-text {
+    @apply text-sm;
   }
 }
