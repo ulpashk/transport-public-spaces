@@ -259,13 +259,13 @@ export default function Home() {
           </div>
           
           {/* Контент заголовка */}
-          <div className="relative z-10 px-6 py-6 flex items-center justify-between">
+          <div className="relative z-10 px-6 py-6 flex items-center justify-between header">
             <div className="flex-1"></div>
             <div className="text-center">
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">
+              <h2 className="font-bold text-gray-900 mb-2">
                 Транспортная доступность общественных пространств
               </h2>
-              <p className="text-lg text-green-600 font-medium">
+              <p className="text-green-600 font-medium">
                 города Алматы
               </p>
             </div>
@@ -306,7 +306,7 @@ export default function Home() {
         </div>
 
         {/* KPI карточки */}
-        <div className="px-6 flex-shrink-0 grid grid-cols-5 gap-6">
+        <div className="flex-shrink-0 grid grid-cols-5 content-padding stats-grid">
           {loading ? (
             <div className="col-span-full flex items-center justify-center py-12">
               <Loader className="w-8 h-8 animate-spin text-green-600" />
@@ -398,14 +398,14 @@ export default function Home() {
         </div>
 
         {/* Таблица слева и карта справа на одном уровне */}
-        <div className="flex-1 px-6 pb-6 pt-6 flex gap-6 min-h-0">
+        <div className="flex-1 pb-6 pt-6 flex min-h-0 content-padding stats-grid">
           {/* Таблица - 40% ширины */}
-          <div className="w-2/5 h-full bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden backdrop-blur-sm">
+          <div className="w-2/5 h-full bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden backdrop-blur-sm sidebar">
             <NearestStopsTable onSelect={handleSelectPark} selectedPark={selectedPark} />
           </div>
 
           {/* Карта - 60% ширины */}
-          <div className="w-3/5 bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden backdrop-blur-sm">
+          <div className="w-3/5 bg-white rounded-xl shadow-xl border border-gray-200 overflow-hidden backdrop-blur-sm map-container">
             <MapTiler
               selectedPark={selectedPark}
               visibleTypes={visibleTypes}
