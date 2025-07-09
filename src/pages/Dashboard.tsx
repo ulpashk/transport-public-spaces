@@ -25,8 +25,7 @@ export default function Dashboard() {
   useEffect(() => {
     const loadMetrics = async () => {
       try {
-        const basePath = import.meta.env.BASE_URL || '/';
-    const response = await fetch(`${basePath}final.geojson`);
+        const response = await fetch('/final.geojson');
         const data = await response.json();
         const metrics = calculateRouteMetrics(data);
         setRouteMetrics(metrics);
