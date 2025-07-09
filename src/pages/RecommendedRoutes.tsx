@@ -823,10 +823,10 @@ export default function RecommendedRoutes() {
               </Link>
             </div>
             <div className="text-center">
-              <h2 className="font-bold text-gray-900 mb-2 header">
+              <h2 className="font-bold text-gray-900 mb-2 header text-2xl">
                 Рекомендованные маршруты
               </h2>
-              <p className="text-blue-600 font-medium header">
+              <p className="text-blue-600 font-medium header text-2xl">
                 для улучшения доступности
               </p>
             </div>
