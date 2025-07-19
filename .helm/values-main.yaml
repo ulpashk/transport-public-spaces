@@ -27,16 +27,18 @@ service:
 
 
 ingress:
-  enabled: false
+  enabled: true
   annotations:
     kubernetes.io/ingress.class: nginx
-#    cert-manager.io/cluster-issuer: letsencrypt-prod
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
-#    nginx.ingress.kubernetes.io/rewrite-target: /$2
   hosts:
     - host: od.smartalmaty.kz
       paths:
-        - path: /transport-public-spaces(/|$)(.*)
+        - path: /transport-public-spaces/
+          pathType: ImplementationSpecific
+    - host: opendata.smartalmaty.kz
+      paths:
+        - path: /transport-public-spaces/
           pathType: ImplementationSpecific
 
 
@@ -59,8 +61,3 @@ nodeSelector: {}
 
 tolerations: []
 affinity: {}
-
-#pvc:
-#  enabled: false
-#  pvcname: media
-#  pvcpatch: /media
