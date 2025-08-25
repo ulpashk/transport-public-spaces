@@ -178,7 +178,7 @@ const ProgressBars: React.FC = () => {
     label: 'Распределение транспорта',
     segments: [
       { label: 'Автобусы', value: 120, color: '#3b82f6' },
-      { label: 'Троллейбусы', value: 45, color: '#10b981' },
+      { label: 'Троллейбусы', value: 45, color: '#F59E0B' },
       { label: 'Маршрутки', value: 230, color: '#f59e0b' },
       { label: 'Метро', value: 15, color: '#8b5cf6' },
     ],

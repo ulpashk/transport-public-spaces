@@ -900,7 +900,7 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
                     ["==", ["get", "type"], "Маршрут автобуса"],
                     "#818cf8",
                     ["==", ["get", "type"], "Рекомендованный маршрут"],
-                    "#22c55e",
+                    "#F59E0B",
                     "#f59e42"
                   ],
                   "line-width": 6,
@@ -954,7 +954,7 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
                     ["==", ["get", "type"], "Маршрут автобуса"],
                     "#3B82F6",
                     ["==", ["get", "type"], "Рекомендованный маршрут"],
-                    "#10B981",
+                    "#F59E0B",
                     ["==", ["get", "type"], "Удлинить маршрут"],
                     "#F59E0B",
                     "#6B7280"

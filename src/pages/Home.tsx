@@ -204,7 +204,7 @@ export default function Home() {
                 <circle cx="652" cy="93" r="1.5" fill="#F59E0B"/>
                 <circle cx="648" cy="100" r="1.5" fill="#8B5CF6"/>
                 <circle cx="655" cy="98" r="1.5" fill="#EC4899"/>
-                <circle cx="658" cy="95" r="1.5" fill="#10B981"/>
+                <circle cx="658" cy="95" r="1.5" fill="#F59E0B"/>
               </g>
 
               {/* Кустарники - плоские */}
@@ -282,7 +282,7 @@ export default function Home() {
                 >
                   <defs>
                     <linearGradient id="greenGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" stopColor="#10B981" />
+                      <stop offset="0%" stopColor="#F59E0B" />
                       <stop offset="100%" stopColor="#059669" />
                     </linearGradient>
                   </defs>
