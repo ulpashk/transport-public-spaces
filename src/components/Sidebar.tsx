@@ -10,7 +10,7 @@ interface SidebarProps {
 const layerTypes = [
   { name: 'Маршрут автобуса',           color: '#3B82F6', count: 156, info: false, category: 'transport' },
   { name: 'Рекомендованный маршрут',    color: '#F59E0B', count: 89,  info: true, category: 'transport'  },
-  { name: 'Удлинить маршрут',           color: '#F59E0B', count: 23,  info: true, category: 'transport'  },
+  { name: 'Удлинить маршрут',           color: '#329ea8', count: 23,  info: true, category: 'transport'  },
   { name: 'Остановка',                  color: '#EF4444', count: 234, info: false, category: 'transport' },
   { name: 'Рекомендованная остановка',  color: '#8B5CF6', count: 67,  info: true, category: 'transport'  },
   { name: 'Озеленение',                 color: '#22C55E', count: 45,  info: false, category: 'environment' },

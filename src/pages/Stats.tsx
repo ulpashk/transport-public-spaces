@@ -34,7 +34,7 @@ export default function Stats() {
     );
   }
 
-  const COLORS = ["#3B82F6", "#F59E0B", "#F59E0B", "#EF4444", "#8B5CF6", "#06B6D4"];
+  const COLORS = ["#3B82F6", "#F59E0B", "#329ea8", "#EF4444", "#8B5CF6", "#06B6D4"];
 
   // формируем данные для PieChart
   const pieData = counts.map((item, i) => ({ ...item, color: COLORS[i % COLORS.length] }));
