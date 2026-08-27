@@ -8,7 +8,6 @@ import MapLegend from "./MapLegend";
 import { Loader } from "lucide-react";
 import { getDisplayName } from "../utils/displayName";
 
-// Функция для валидации координат полигона
 function validatePolygonCoordinates(geometry: any): boolean {
   if (!geometry || !geometry.coordinates) return false;
 
@@ -31,11 +30,9 @@ function validatePolygonCoordinates(geometry: any): boolean {
   return false;
 }
 
-// Функция для создания содержимого popup
 function createPopupContent(feature: FeatureType): React.ReactNode {
   const props = feature.properties;
 
-  // Определяем иконку по типу объекта
   const getIcon = (type: string) => {
     switch (type) {
       case "Остановка":
@@ -117,8 +114,8 @@ interface MapProps {
   onToggleVisibility: (type: string) => void;
   hideLegend?: boolean;
   allowedLegendTypes?: string[];
-  showAllForLegendTypes?: boolean; // Показывать все объекты для типов из легенды
-  onClearSelection?: () => void; // Функция для сброса выбора
+  showAllForLegendTypes?: boolean;
+  onClearSelection?: () => void;
 }
 
 export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, onToggleVisibility, hideLegend = false, allowedLegendTypes, showAllForLegendTypes = false, onClearSelection }: MapProps) {
@@ -126,7 +123,7 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
   const [features, setFeatures] = useState<FeatureType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [mapKey, setMapKey] = useState(0);
+  // const [mapKey, setMapKey] = useState(0);
   const [is3D, setIs3D] = useState(false);
   const [popupInfo, setPopupInfo] = useState<{
     feature: FeatureType;
@@ -134,22 +131,17 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
     longitude: number;
   } | null>(null);
 
-  // Функция для извлечения номера маршрута из названия
   const extractRouteNumber = (routeName: string): string | null => {
-    // Ищем цифры в названии маршрута
     const match = routeName.match(/\d+/);
     return match ? match[0] : null;
   };
 
-  // MapTiler API key
   const MAPTILER_KEY = "h9AWBEaI4SyKaLbniSna";
 
-  // Список стилей для пробы (fallback)
   const mapStyles = [
     `https://api.maptiler.com/maps/streets/style.json?key=${MAPTILER_KEY}`,
     `https://api.maptiler.com/maps/basic/style.json?key=${MAPTILER_KEY}`,
     `https://api.maptiler.com/maps/bright/style.json?key=${MAPTILER_KEY}`,
-    // Fallback к простому стилю
     {
       version: 8 as const,
       sources: {
@@ -174,18 +166,12 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
   const mapStyle = mapStyles[currentStyleIndex];
 
   useEffect(() => {
-    // Получаем base path из vite config или используем по умолчанию
     const basePath = import.meta.env.BASE_URL || '/';
     fetch(`${basePath}final.geojson`)
       .then(res => res.json())
       .then(data => {
-        // console.log("=== GEOJSON DATA LOADED ===");
-        // console.log("Total features:", data.features.length);
-
-        // ID маршрутов для исключения из отображения
         const excludedIds = [51, 42, 29, 3, 5];
 
-        // Фильтруем исключенные маршруты
         const filteredFeatures = data.features.filter((feature: any) => {
           const isRoute = ["Рекомендованный маршрут", "Удлинить маршрут", "Маршрут автобуса"].includes(feature.properties.type);
           if (isRoute && excludedIds.includes(feature.properties.id)) {
@@ -194,22 +180,18 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
           return true;
         });
 
-        // console.log("Filtered features:", filteredFeatures.length);
         setFeatures(filteredFeatures as FeatureType[]);
       })
       .catch(err => setError(err.message))
       .finally(() => setLoading(false));
   }, []);
 
-  // Поиск выбранного общественного пространства
   const selectedParkFeature = useMemo(() => {
     if (!selectedPark) {
       return null;
     }
 
-    // Если есть unique_id, используем его для точного поиска
     if (selectedPark.unique_id) {
-      // Сначала ищем по точному unique_id
       let found = features.find(
         f =>
           f.properties.type === "Озеленение" &&
@@ -217,7 +199,6 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
       );
       if (found) return found;
 
-      // Если unique_id создан на основе id, ищем по id
       if (selectedPark.unique_id.startsWith('park_id_')) {
         const parkId = parseInt(selectedPark.unique_id.replace('park_id_', ''));
         found = features.find(
@@ -228,7 +209,6 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
         if (found) return found;
       }
 
-      // Если unique_id создан на основе индекса, ищем по индексу
       if (selectedPark.unique_id.startsWith('park_index_')) {
         const parkIndex = parseInt(selectedPark.unique_id.replace('park_index_', ''));
         const greensOnly = features.filter(f => f.properties.type === "Озеленение");
@@ -238,7 +218,6 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
       }
     }
 
-    // Fallback: поиск по имени и району (только если имя не "Без названия")
     if (selectedPark.parkName && selectedPark.parkName !== "Без названия") {
       let found = features.find(
         f =>
@@ -261,13 +240,11 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
     return null;
   }, [features, selectedPark]);
 
-  // Поиск выбранного маршрута
   const selectedRouteFeature = useMemo(() => {
     if (!selectedRoute) {
       return null;
     }
 
-    // Сначала ищем по уникальному ID если он есть
     if (selectedRoute.uniqueId !== null && selectedRoute.uniqueId !== undefined) {
       const found = features.find(
         f => f.properties.id === selectedRoute.uniqueId
@@ -275,7 +252,6 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
       if (found) return found;
     }
 
-    // Ищем точное совпадение по имени и типу
     let found = features.find(
       f =>
         f.properties.type === selectedRoute.routeType &&
@@ -283,7 +259,6 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
     );
 
     if (!found) {
-      // Если не найден, ищем по типу и району
       found = features.find(
         f =>
           f.properties.type === selectedRoute.routeType &&
@@ -294,9 +269,7 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
     return found;
   }, [features, selectedRoute]);
 
-  // Фичи рядом с общественным пространством
   const stopsNearby = useMemo(() => {
-    // Если выбран парк
     if (selectedParkFeature && visibleTypes.includes("Остановка")) {
       const stopIds = (selectedParkFeature.properties.nearest_stop_ids ?? []).concat(
         selectedParkFeature.properties.nearest_rec_stop_ids ?? []
@@ -306,7 +279,6 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
       );
     }
 
-    // Если выбран маршрут - показываем все остановки на пути
     if (selectedRouteFeature) {
       const stopIds = (selectedRouteFeature.properties.nearest_stop_ids ?? []).concat(
         selectedRouteFeature.properties.nearest_rec_stop_ids ?? []
@@ -320,7 +292,6 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
   }, [features, selectedParkFeature, selectedRouteFeature, visibleTypes]);
 
   const routesNearby = useMemo(() => {
-    // Если выбран парк
     if (selectedParkFeature) {
       let ids: number[] = [];
       if (visibleTypes.includes("Маршрут автобуса"))
@@ -337,16 +308,13 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
       );
     }
 
-    // Если выбран маршрут - показываем сам маршрут и связанные маршруты
     if (selectedRouteFeature) {
       let routesToShow = [selectedRouteFeature];
 
-      // Если это удлинение маршрута, показываем также оригинальный маршрут по номеру
       if (selectedRouteFeature.properties.type === "Удлинить маршрут") {
         const extensionRouteNumber = extractRouteNumber(selectedRouteFeature.properties.name);
 
         if (extensionRouteNumber) {
-          // Ищем оригинальный маршрут с тем же номером
           const originalRoutes = features.filter(f => {
             if (f.properties.type !== "Маршрут автобуса") return false;
             const originalRouteNumber = extractRouteNumber(f.properties.name);
@@ -356,12 +324,10 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
         }
       }
 
-      // Если это рекомендованный маршрут, показываем также связанные маршруты с тем же номером
       if (selectedRouteFeature.properties.type === "Рекомендованный маршрут") {
         const recommendedRouteNumber = extractRouteNumber(selectedRouteFeature.properties.name);
 
         if (recommendedRouteNumber) {
-          // Ищем оригинальные и удлиненные маршруты с тем же номером
           const relatedRoutes = features.filter(f => {
             if (!["Маршрут автобуса", "Удлинить маршрут"].includes(f.properties.type)) return false;
             const routeNumber = extractRouteNumber(f.properties.name);
@@ -377,11 +343,9 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
     return [];
   }, [features, selectedParkFeature, selectedRouteFeature, visibleTypes]);
 
-  // Общественные пространства рядом с выбранным маршрутом
   const parksNearby = useMemo(() => {
     if (!selectedRouteFeature) return [];
 
-    // Ищем все парки, которые пересекает маршрут
     return features.filter(f =>
       f.properties.type === "Озеленение" &&
       (f.properties.nearby_route_ids?.includes(selectedRouteFeature.properties.id) ||
@@ -393,12 +357,9 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
   const showSelectedPark = selectedParkFeature;
   const showSelectedRoute = selectedRouteFeature;
 
-  // Фильтрация объектов для отображения
   const points = useMemo(
     () => {
-      // Если выбран маршрут
       if (selectedRouteFeature) {
-        // Если включен режим "показать все для типов легенды", показываем все остановки и парки + связанные с маршрутом
         if (showAllForLegendTypes && allowedLegendTypes) {
           const allLegendPoints = features.filter(f =>
             f.geometry.type === "Point" &&
@@ -407,14 +368,12 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
           );
           return allLegendPoints;
         }
-        // Иначе показываем только связанные остановки
         return stopsNearby.filter(f =>
           f.geometry.type === "Point" &&
           visibleTypes.includes(f.properties.type)
         );
       }
 
-      // Если выбран парк, показываем только связанные остановки
       if (selectedParkFeature) {
         return stopsNearby.filter(f =>
           f.geometry.type === "Point" &&
@@ -422,7 +381,6 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
         );
       }
 
-      // Обычный режим - показываем все по типам
       return features.filter(
         f =>
           visibleTypes.includes(f.properties.type) &&
@@ -434,14 +392,12 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
 
   const lines = useMemo(
     () => {
-      // Если выбран маршрут, показываем ТОЛЬКО выбранный маршрут и связанные (игнорируем visibleTypes для маршрутов)
       if (selectedRouteFeature) {
         return routesNearby.filter(f =>
           f.geometry.type === "LineString" || f.geometry.type === "MultiLineString"
         );
       }
 
-      // Если выбран парк, показываем только связанные маршруты
       if (selectedParkFeature) {
         return routesNearby.filter(f =>
           (f.geometry.type === "LineString" || f.geometry.type === "MultiLineString") &&
@@ -449,9 +405,8 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
         );
       }
 
-      // Обычный режим - НЕ показываем маршруты если используется showAllForLegendTypes
       if (showAllForLegendTypes && allowedLegendTypes) {
-        return []; // Не показываем маршруты в обычном режиме на странице рекомендаций
+        return [];
       }
 
       return features.filter(
@@ -466,9 +421,7 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
 
   const polygons = useMemo(
     () => {
-      // Если выбран маршрут
       if (selectedRouteFeature) {
-        // Если включен режим "показать все для типов легенды", показываем все парки
         if (showAllForLegendTypes && allowedLegendTypes) {
           return features.filter(f =>
             (f.geometry.type === "Polygon" || f.geometry.type === "MultiPolygon") &&
@@ -476,14 +429,12 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
             visibleTypes.includes(f.properties.type)
           );
         }
-        // Иначе показываем только связанные парки
         return parksNearby.filter(f =>
           (f.geometry.type === "Polygon" || f.geometry.type === "MultiPolygon") &&
           visibleTypes.includes(f.properties.type)
         );
       }
 
-      // Если выбран парк, показываем только выбранный парк
       if (selectedParkFeature) {
         return [selectedParkFeature].filter(f =>
           (f.geometry.type === "Polygon" || f.geometry.type === "MultiPolygon") &&
@@ -491,7 +442,6 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
         );
       }
 
-      // Обычный режим
       return features.filter(
         f =>
           visibleTypes.includes(f.properties.type) &&
@@ -513,15 +463,12 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
     [features, visibleTypes]
   );
 
-  // Функция для получения начальной точки маршрута
   const getRouteStartPoint = (routeFeature: FeatureType): [number, number] | null => {
     const geometry = routeFeature.geometry;
 
     if (geometry.type === "LineString") {
-      // Для LineString берем первую точку
       return geometry.coordinates[0] as [number, number];
     } else if (geometry.type === "MultiLineString") {
-      // Для MultiLineString берем первую точку первой линии
       if (geometry.coordinates.length > 0 && geometry.coordinates[0].length > 0) {
         return geometry.coordinates[0][0] as [number, number];
       }
@@ -530,11 +477,9 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
     return null;
   };
 
-  // Функция для вычисления границ объекта с отступами и связанными объектами
   const calculateBounds = (mainFeature: FeatureType, relatedFeatures: FeatureType[] = []) => {
     let allCoords: [number, number][] = [];
 
-    // Функция для извлечения координат из геометрии
     const extractCoords = (geometry: any) => {
       if (geometry.type === "Point") {
         return [geometry.coordinates as [number, number]];
@@ -550,10 +495,8 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
       return [];
     };
 
-    // Добавляем координаты основного объекта
     allCoords = allCoords.concat(extractCoords(mainFeature.geometry));
 
-    // Добавляем координаты связанных объектов
     relatedFeatures.forEach(feature => {
       allCoords = allCoords.concat(extractCoords(feature.geometry));
     });
@@ -568,9 +511,8 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
     const minLat = Math.min(...lats);
     const maxLat = Math.max(...lats);
 
-    // Добавляем отступы (padding) вокруг области для лучшего контекста
-    const lngPadding = Math.max((maxLng - minLng) * 0.3, 0.008); // Минимум 0.008 для контекста города
-    const latPadding = Math.max((maxLat - minLat) * 0.3, 0.008); // Минимум 0.008 для контекста города
+    const lngPadding = Math.max((maxLng - minLng) * 0.3, 0.008);
+    const latPadding = Math.max((maxLat - minLat) * 0.3, 0.008); 
 
     return {
       center: [(minLng + maxLng) / 2, (minLat + maxLat) / 2] as [number, number],
@@ -581,44 +523,81 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
     };
   };
 
-  // Эффект для сброса карты при изменении выбранного объекта
-  useEffect(() => {
-    setMapKey(prev => prev + 1);
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     if (selectedParkFeature && mapRef.current) {
+  //       const bounds = calculateBounds(selectedParkFeature, stopsNearby);
 
-    setTimeout(() => {
-      if (selectedParkFeature && mapRef.current) {
+  //       if (bounds) {
+  //         mapRef.current.fitBounds(bounds.bounds, {
+  //           padding: { top: 80, bottom: 80, left: 80, right: 80 },
+  //           maxZoom: 13, 
+  //           duration: 1000
+  //         });
+  //       }
+  //     } else if (selectedRouteFeature && mapRef.current) {
+  //       const startPoint = getRouteStartPoint(selectedRouteFeature);
+
+  //       if (startPoint) {
+  //         mapRef.current.flyTo({
+  //           center: startPoint,
+  //           zoom: 15,
+  //           duration: 1000
+  //         });
+  //       }
+  //     } else if (!selectedPark && !selectedRoute && mapRef.current) {
+  //       mapRef.current.flyTo({
+  //         center: [76.8897, 43.2389],
+  //         zoom: 12,
+  //         duration: 1000
+  //       });
+  //     }
+  //   }, 100);
+  // }, [selectedPark, selectedParkFeature, selectedRoute, selectedRouteFeature, stopsNearby, parksNearby]);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (!mapRef.current) return;
+
+      if (selectedParkFeature) {
         const bounds = calculateBounds(selectedParkFeature, stopsNearby);
 
         if (bounds) {
-          // Используем fitBounds для показа парка с контекстом
           mapRef.current.fitBounds(bounds.bounds, {
             padding: { top: 80, bottom: 80, left: 80, right: 80 },
-            maxZoom: 13, // Ограничиваем максимальный зум для лучшего контекста
-            duration: 1000
+            maxZoom: 13,
+            duration: 1000,
           });
         }
-      } else if (selectedRouteFeature && mapRef.current) {
-        // Зуммируемся к началу маршрута
+      } else if (selectedRouteFeature) {
         const startPoint = getRouteStartPoint(selectedRouteFeature);
 
         if (startPoint) {
           mapRef.current.flyTo({
             center: startPoint,
-            zoom: 15, // Увеличенный зум для детального просмотра начала маршрута
-            duration: 1000
+            zoom: 15,
+            duration: 1000,
           });
         }
-      } else if (!selectedPark && !selectedRoute && mapRef.current) {
+      } else {
         mapRef.current.flyTo({
           center: [76.8897, 43.2389],
           zoom: 12,
-          duration: 1000
+          duration: 1000,
         });
       }
     }, 100);
-  }, [selectedPark, selectedParkFeature, selectedRoute, selectedRouteFeature, stopsNearby, parksNearby]);
 
-  // Функция переключения 3D режима
+    return () => clearTimeout(timeout);
+  }, [
+    selectedPark,
+    selectedParkFeature,
+    selectedRoute,
+    selectedRouteFeature,
+    stopsNearby,
+    parksNearby,
+  ]);
+
   const toggle3D = () => {
     if (!mapRef.current) return;
 
@@ -638,7 +617,6 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
     });
   };
 
-  // Создание GeoJSON источников данных
   const getGeoJSONData = (featuresList: FeatureType[]) => ({
     type: "FeatureCollection" as const,
     features: featuresList
@@ -675,7 +653,6 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
 
   return (
     <div className="w-full h-full flex flex-col block_with_map">
-      {/* Легенда сверху карты */}
       {!hideLegend && (
         <div className="flex-shrink-0 button_map_wrap">
           <LegendOverlay
@@ -690,10 +667,9 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
         </div>
       )}
 
-      {/* MapTiler карта */}
       <div className="relative flex-1 rounded-b-lg overflow-hidden">
         <Map
-          key={mapKey}
+          // key={mapKey}
           ref={mapRef}
           mapStyle={mapStyle}
           initialViewState={{
@@ -714,21 +690,15 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
           onClick={onMapClick}
           onError={(e) => {
             console.error('Map component error:', e);
-            // Если есть ошибка и не достигли последнего стиля, пробуем следующий
             if (currentStyleIndex < mapStyles.length - 1) {
-              // console.log(`Trying fallback style ${currentStyleIndex + 1}`);
               setCurrentStyleIndex(prev => prev + 1);
             }
           }}
           onLoad={() => {
             const map = mapRef.current?.getMap();
             if (map) {
-              // console.log("Map loaded successfully");
-
-              // Обработка отсутствующих изображений
               map.on('styleimagemissing', (e) => {
                 console.warn('Missing image:', e.id);
-                // Создаем пустое изображение для недостающих спрайтов
                 const canvas = document.createElement('canvas');
                 canvas.width = 64;
                 canvas.height = 64;
@@ -737,32 +707,22 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
                   context.fillStyle = 'rgba(0,0,0,0)';
                   context.fillRect(0, 0, 64, 64);
                 }
-                // Создаем ImageData из canvas для корректного типа
                 const imageData = context.getImageData(0, 0, 64, 64);
                 map.addImage(e.id, imageData);
               });
 
-              // Обработка ошибок карты
               map.on('error', (e) => {
                 console.error('Map error:', e);
-                // Если есть ошибка и не достигли последнего стиля, пробуем следующий
                 if (currentStyleIndex < mapStyles.length - 1) {
-                  // console.log(`Trying fallback style ${currentStyleIndex + 1}`);
                   setCurrentStyleIndex(prev => prev + 1);
                 }
               });
 
-              // Ждем пока стиль полностью загрузится
               map.on('styledata', () => {
-                // console.log("Style loaded");
                 try {
-                  // Проверяем есть ли уже слой 3D зданий
                   if (!map.getLayer("3d-buildings")) {
-                    // Добавляем 3D здания только если есть нужный источник
                     const sources = map.getStyle().sources;
-                    // console.log("Available sources:", Object.keys(sources));
 
-                    // Пробуем разные возможные источники для зданий
                     let buildingSource = null;
                     if (sources['openmaptiles']) {
                       buildingSource = 'openmaptiles';
@@ -773,7 +733,6 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
                     }
 
                     if (buildingSource) {
-                      // console.log("Adding 3D buildings with source:", buildingSource);
                       map.addLayer({
                         id: "3d-buildings",
                         source: buildingSource,
@@ -829,146 +788,7 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
             }
           }}
         >
-          {/* Выбранный парк */}
-          {selectedPark && showSelectedPark && (
-            <Source
-              id="selected-park"
-              type="geojson"
-              data={{
-                type: "FeatureCollection",
-                features: [selectedParkFeature!]
-              }}
-            >
-              <Layer
-                id="selected-park-layer"
-                type="fill"
-                paint={{
-                  "fill-color": "#ef4444",
-                  "fill-opacity": 0.7
-                }}
-              />
-              <Layer
-                id="selected-park-outline"
-                type="line"
-                paint={{
-                  "line-color": "#dc2626",
-                  "line-width": 6,
-                  "line-dasharray": [2, 1]
-                }}
-              />
-            </Source>
-          )}
 
-          {/* Остановки рядом с выбранным парком */}
-          {selectedPark && stopsNearby.length > 0 && (
-            <Source
-              id="stops-nearby"
-              type="geojson"
-              data={getGeoJSONData(stopsNearby)}
-            >
-              <Layer
-                id="stops-nearby-layer"
-                type="circle"
-                paint={{
-                  "circle-radius": 9,
-                  "circle-color": [
-                    "case",
-                    ["==", ["get", "type"], "Остановка"],
-                    "#ef4444",
-                    "#22d3ee"
-                  ],
-                  "circle-stroke-color": "#fff",
-                  "circle-stroke-width": 2
-                }}
-              />
-            </Source>
-          )}
-
-          {/* Маршруты рядом с выбранным парком */}
-          {selectedPark && routesNearby.length > 0 && (
-            <Source
-              id="routes-nearby"
-              type="geojson"
-              data={getGeoJSONData(routesNearby)}
-            >
-              <Layer
-                id="routes-nearby-layer"
-                type="line"
-                paint={{
-                  "line-color": [
-                    "case",
-                    ["==", ["get", "type"], "Маршрут автобуса"],
-                    "#818cf8",
-                    ["==", ["get", "type"], "Рекомендованный маршрут"],
-                    "#F59E0B",
-                    ["==", ["get", "type"], "Удлинить маршрут"],
-                    "#329ea8",
-                    "#f59e42"
-                  ],
-                  "line-width": 6,
-                  "line-opacity": 0.8,
-                  "line-dasharray": [2, 1]
-                }}
-              />
-            </Source>
-          )}
-
-          {/* Обычный режим - точки */}
-          {!selectedPark && points.length > 0 && (
-            <Source
-              id="points"
-              type="geojson"
-              data={getGeoJSONData(points)}
-            >
-              <Layer
-                id="points-layer"
-                type="circle"
-                paint={{
-                  "circle-radius": 6,
-                  "circle-color": [
-                    "case",
-                    ["==", ["get", "type"], "Остановка"],
-                    "#EF4444",
-                    ["==", ["get", "type"], "Рекомендованная остановка"],
-                    "#8B5CF6",
-                    "#6B7280"
-                  ],
-                  "circle-stroke-color": "#fff",
-                  "circle-stroke-width": 1
-                }}
-              />
-            </Source>
-          )}
-
-          {/* Обычный режим - линии */}
-          {!selectedPark && lines.length > 0 && (
-            <Source
-              id="lines"
-              type="geojson"
-              data={getGeoJSONData(lines)}
-            >
-              <Layer
-                id="lines-layer"
-                type="line"
-                paint={{
-                  "line-color": [
-                    "case",
-                    ["==", ["get", "type"], "Маршрут автобуса"],
-                    "#3B82F6",
-                    ["==", ["get", "type"], "Рекомендованный маршрут"],
-                    "#F59E0B",
-                    ["==", ["get", "type"], "Удлинить маршрут"],
-                    "#329ea8",
-                    "#6B7280"
-                  ],
-                  "line-width": 4,
-                  "line-opacity": 1
-                }}
-              />
-            </Source>
-          )}
-
-          {/* Обычный режим - полигоны */}
           {!selectedPark && polygons.length > 0 && (
             <Source
               id="polygons"
@@ -1012,7 +832,141 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
               />
             </Source>
           )}
-          {/* Попап с информацией */}
+
+          {selectedPark && showSelectedPark && (
+            <Source
+              id="selected-park"
+              type="geojson"
+              data={{
+                type: "FeatureCollection",
+                features: [selectedParkFeature!]
+              }}
+            >
+              <Layer
+                id="selected-park-layer"
+                type="fill"
+                paint={{
+                  "fill-color": "#ef4444",
+                  "fill-opacity": 0.7
+                }}
+              />
+              <Layer
+                id="selected-park-outline"
+                type="line"
+                paint={{
+                  "line-color": "#dc2626",
+                  "line-width": 6,
+                  "line-dasharray": [2, 1]
+                }}
+              />
+            </Source>
+          )}
+
+          {!selectedPark && lines.length > 0 && (
+            <Source
+              id="lines"
+              type="geojson"
+              data={getGeoJSONData(lines)}
+            >
+              <Layer
+                id="lines-layer"
+                type="line"
+                paint={{
+                  "line-color": [
+                    "case",
+                    ["==", ["get", "type"], "Маршрут автобуса"],
+                    "#3B82F6",
+                    ["==", ["get", "type"], "Рекомендованный маршрут"],
+                    "#F59E0B",
+                    ["==", ["get", "type"], "Удлинить маршрут"],
+                    "#329ea8",
+                    "#6B7280"
+                  ],
+                  "line-width": 4,
+                  "line-opacity": 1
+                }}
+              />
+            </Source>
+          )}
+
+          {selectedPark && routesNearby.length > 0 && (
+            <Source
+              id="routes-nearby"
+              type="geojson"
+              data={getGeoJSONData(routesNearby)}
+            >
+              <Layer
+                id="routes-nearby-layer"
+                type="line"
+                paint={{
+                  "line-color": [
+                    "case",
+                    ["==", ["get", "type"], "Маршрут автобуса"],
+                    "#818cf8",
+                    ["==", ["get", "type"], "Рекомендованный маршрут"],
+                    "#F59E0B",
+                    ["==", ["get", "type"], "Удлинить маршрут"],
+                    "#329ea8",
+                    "#f59e42"
+                  ],
+                  "line-width": 6,
+                  "line-opacity": 0.8,
+                  "line-dasharray": [2, 1]
+                }}
+              />
+            </Source>
+          )}
+
+          {!selectedPark && points.length > 0 && (
+            <Source
+              id="points"
+              type="geojson"
+              data={getGeoJSONData(points)}
+            >
+              <Layer
+                id="points-layer"
+                type="circle"
+                paint={{
+                  "circle-radius": 6,
+                  "circle-color": [
+                    "case",
+                    ["==", ["get", "type"], "Остановка"],
+                    "#EF4444",
+                    ["==", ["get", "type"], "Рекомендованная остановка"],
+                    "#8B5CF6",
+                    "#6B7280"
+                  ],
+                  "circle-stroke-color": "#fff",
+                  "circle-stroke-width": 1
+                }}
+              />
+            </Source>
+          )}
+
+          {selectedPark && stopsNearby.length > 0 && (
+            <Source
+              id="stops-nearby"
+              type="geojson"
+              data={getGeoJSONData(stopsNearby)}
+            >
+              <Layer
+                id="stops-nearby-layer"
+                type="circle"
+                paint={{
+                  "circle-radius": 9,
+                  "circle-color": [
+                    "case",
+                    ["==", ["get", "type"], "Остановка"],
+                    "#ef4444",
+                    "#22d3ee"
+                  ],
+                  "circle-stroke-color": "#fff",
+                  "circle-stroke-width": 2
+                }}
+              />
+            </Source>
+          )}
+
           {popupInfo && (
             <Popup
               longitude={popupInfo.longitude}
@@ -1028,7 +982,6 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
           )}
         </Map>
 
-        {/* Управляющие элементы */}
         <FloatingControls
           onZoomIn={() => mapRef.current?.zoomIn()}
           onZoomOut={() => mapRef.current?.zoomOut()}
@@ -1044,20 +997,23 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
         />
 
         {/* Кнопка сброса выбора */}
-        {(selectedPark || selectedRoute) && onClearSelection && (
+        {/* {(selectedPark || selectedRoute) && onClearSelection && (
           <button
-            onClick={onClearSelection}
-            className="absolute top-4 right-4 z-50 p-3 bg-white text-gray-700 rounded-lg shadow-lg border border-gray-200 hover:bg-gray-50 transition-all duration-200 flex items-center gap-2"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onClearSelection();
+            }}
+            className="absolute top-4 right-4 z-50 p-3 bg-white text-gray-700 rounded-xl shadow-md border border-gray-200 hover:bg-gray-50 transition-all duration-200 flex items-center gap-2"
             title="Сбросить выбор"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
-            <span className="text-sm font-medium">Сбросить</span>
+            <span className="text-sm font-bold uppercase tracking-tight">Сбросить</span>
           </button>
-        )}
+        )} */}
 
-        {/* Кнопка 3D */}
         <button
           onClick={toggle3D}
           className={`absolute bottom-4 right-4 z-50 p-3 rounded-lg shadow-lg border border-gray-200 transition-all duration-200 ${
@@ -1070,7 +1026,6 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
           <span className="text-lg font-bold">3D</span>
         </button>
 
-        {/* Легенда на карте */}
         <MapLegend
           items={legendItems.filter(item => {
             if (allowedLegendTypes) {

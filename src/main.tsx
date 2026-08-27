@@ -5,7 +5,6 @@ import App from "./App";
 import "./index.css";
 import "leaflet/dist/leaflet.css";
 
-// Исправляем проблему с иконками Leaflet
 import L from 'leaflet';
 import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
