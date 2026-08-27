@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Layout from "../components/Layout";
 import MapTiler from "../components/MapTiler";
-import { Route, MapPin, Navigation, TreePine, Loader, Search, Eye, TrendingUp, Target, Plus, Info } from "lucide-react";
+import { Route, Loader, TrendingUp, Info } from "lucide-react";
 import { calculateRouteMetrics } from "../utils/routeMetrics";
 import { getDisplayName } from "../utils/displayName";
 import Header from "../components/Header";
@@ -49,19 +49,15 @@ export default function RecommendedRoutes() {
         }
         const data = await response.json();
 
-        // Фильтруем рекомендованные маршруты и удлинения
         const routeFeatures = data.features.filter((feature: any) =>
           feature.properties.type === "Рекомендованный маршрут" ||
           feature.properties.type === "Удлинить маршрут"
         );
 
-        // Получаем все общественные пространства для подсчета пересечений
         const publicSpaces = data.features.filter((feature: any) =>
           feature.properties.type === "Озеленение"
         );
 
-        // Преобразуем в нужный формат
-        // ID маршрутов для исключения из отображения
         const excludedIds = [51, 42, 29, 3, 5];
 
         const formattedRoutes: RouteData[] = routeFeatures
@@ -70,7 +66,6 @@ export default function RecommendedRoutes() {
           const props = feature.properties;
           const length = props.Shape__Length ? (props.Shape__Length / 1000).toFixed(1) : Math.random() * 20 + 5;
 
-          // Подсчитываем реальное количество общественных пространств, связанных с маршрутом
           let publicSpacesCount = 0;
           if (props.id) {
             publicSpacesCount = publicSpaces.filter((park: any) => {
@@ -90,14 +85,13 @@ export default function RecommendedRoutes() {
             type: props.type,
             district: props.district || "Городской маршрут",
             length: typeof length === 'string' ? parseFloat(length) : length,
-            publicSpaces: publicSpacesCount, // Реальное количество связанных общественных пространств
+            publicSpaces: publicSpacesCount,
             improvement: getImprovementText(props.type, props.name)
           };
         });
 
         setRoutes(formattedRoutes);
 
-        // Рассчитываем метрики маршрутов
         const metrics = calculateRouteMetrics(data);
         setRouteMetrics(metrics);
       } catch (err) {
@@ -226,56 +220,88 @@ export default function RecommendedRoutes() {
     const content = getPopupContent(showInfoPopup);
     if (!content) return null;
 
+    const stepColors: any = {
+      green: { bg: "bg-emerald-50", text: "text-emerald-700", border: "border-emerald-100", circle: "bg-emerald-500" },
+      blue: { bg: "bg-blue-50", text: "text-blue-700", border: "border-blue-100", circle: "bg-blue-500" },
+      emerald: { bg: "bg-teal-50", text: "text-teal-700", border: "border-teal-100", circle: "bg-teal-500" },
+      purple: { bg: "bg-purple-50", text: "text-purple-700", border: "border-purple-100", circle: "bg-purple-500" },
+      orange: { bg: "bg-orange-50", text: "text-orange-700", border: "border-orange-100", circle: "bg-orange-500" },
+    };
+
+    const style = stepColors[content.steps[0].color] || stepColors.blue;
+
     return (
-      <div className="fixed inset-0 bg-transparent flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto">
-          <div className={`bg-gradient-to-r ${content.gradient} px-6 py-4 rounded-t-xl`}>
-            <div className="flex items-center justify-between">
-              <h3 className="text-xl font-bold text-white">{content.title}</h3>
-              <button
-                onClick={() => setShowInfoPopup(null)}
-                className="text-white hover:bg-white/20 rounded-lg p-2 transition-colors"
-              >
-                ✕
-              </button>
+      <div 
+        className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-[1000] p-4 animate-in fade-in duration-200"
+        onClick={() => setShowInfoPopup(null)}
+      >
+        <div 
+          className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[85vh] overflow-hidden flex flex-col border border-gray-100"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="p-5 border-b border-gray-100 flex items-center justify-between bg-[#F9FAFB]">
+            <div className="flex items-center gap-3">
+              <div className={`p-2 rounded-xl ${style.bg} ${style.text}`}>
+                <Info size={20} />
+              </div>
+              <h3 className="text-lg font-bold text-gray-800">{content.title}</h3>
             </div>
+            <button
+              onClick={() => setShowInfoPopup(null)}
+              className="text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-2 rounded-lg transition-colors"
+            >
+              ✕
+            </button>
           </div>
 
-          <div className="p-6 space-y-4">
-            <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded">
-              <p className="text-blue-800 font-medium">
-                🎯 <strong>Цель:</strong> {content.goal}
+          <div className="p-6 overflow-y-auto custom-scrollbar space-y-6">
+            <div className={`p-4 rounded-xl border ${style.bg} ${style.border}`}>
+              <p className={`text-sm leading-relaxed ${style.text}`}>
+                <span className="font-bold uppercase text-[10px] tracking-widest block mb-1 opacity-70">Цель алгоритма</span>
+                {content.goal}
               </p>
             </div>
 
-            <div className="space-y-3">
-              <h4 className="font-semibold text-gray-900 flex items-center">
-                <Route className="w-5 h-5 mr-2 text-gray-600" />
-                Как работает алгоритм:
+            <div className="space-y-4">
+              <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest flex items-center">
+                <Route className="w-4 h-4 mr-2" />
+                Процесс анализа:
               </h4>
 
-              <div className="space-y-2 text-gray-700">
+              <div className="grid gap-3">
                 {content.steps.map((step, index) => (
-                  <div key={index} className="flex items-start space-x-3">
-                    <span className={`bg-${step.color}-100 text-${step.color}-800 rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold`}>
+                  <div key={index} className="flex items-start gap-4 p-3 rounded-xl border border-gray-50 bg-white hover:border-gray-200 transition-colors">
+                    <span className={`flex-shrink-0 w-6 h-6 rounded-full ${style.circle} text-white flex items-center justify-center text-xs font-bold shadow-sm`}>
                       {index + 1}
                     </span>
-                    <p><strong>{step.title}:</strong> {step.desc}</p>
+                    <div>
+                      <p className="text-sm font-bold text-gray-800 mb-0.5">{step.title}</p>
+                      <p className="text-xs text-gray-500 leading-normal">{step.desc}</p>
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div className={`bg-${content.steps[0].color}-50 border-l-4 border-${content.steps[0].color}-400 p-4 rounded`}>
-              <h4 className={`font-medium text-${content.steps[0].color}-800 mb-2`}>📊 Результат:</h4>
-              <p className={`text-${content.steps[0].color}-700`}>{content.result}</p>
-            </div>
-
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <p className="text-sm text-gray-600">
-                <strong>Техническая деталь:</strong> Все расчеты выполняются в проекции EPSG:3857 для точности в метрах с использованием библиотек NetworkX и Shapely.
+            <div className="bg-gray-900 rounded-xl p-5 text-white shadow-inner relative overflow-hidden">
+              <div className="absolute right-[-10%] top-[-20%] opacity-10">
+                  <TrendingUp size={120} />
+              </div>
+              
+              <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Ожидаемый результат:</h4>
+              <p className="text-lg font-semibold text-emerald-400 leading-tight">
+                {content.result}
               </p>
             </div>
+          </div>
+
+          <div className="p-4 bg-[#F9FAFB] border-t border-gray-100 flex justify-end">
+            <button
+              onClick={() => setShowInfoPopup(null)}
+              className="px-6 py-2 bg-gray-800 text-white rounded-xl text-sm font-bold hover:bg-gray-700 transition-all active:scale-95 shadow-md"
+            >
+              Понятно
+            </button>
           </div>
         </div>
       </div>
