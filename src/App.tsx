@@ -9,7 +9,8 @@ import './utils/res.css'
 
 export default function App() {
   return (
-    <Router basename="/transport-public-spaces">
+    // <Router basename="/transport-public-spaces">
+    <Router basename={import.meta.env.BASE_URL}>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/stats" element={<Stats />} />

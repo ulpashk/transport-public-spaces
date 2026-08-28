@@ -4,6 +4,7 @@ import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: '/transport-public-spaces/',
+  // base: '/transport-public-spaces/',
+  base: process.env.VERCEL ? '/' : '/transport-public-spaces/',
   plugins: [react(), tailwindcss()],
 })

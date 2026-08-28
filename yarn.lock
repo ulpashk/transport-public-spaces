@@ -882,6 +882,13 @@
     "@types/mapbox__point-geometry" "*"
     "@types/pbf" "*"
 
+"@types/node@^18.0.0 || ^20.0.0 || >=22.0.0", "@types/node@^26.4.0":
+  version "26.4.0"
+  resolved "https://registry.npmjs.org/@types/node/-/node-26.4.0.tgz"
+  integrity sha512-faiGnoIrLH/V8cibOMEAZ8pMw6oXqSukl29ra4mN8GdaB2ZewzeaLj+INpV5N+Z1eKWzY+IzaIZH2EIR6YZRNQ==
+  dependencies:
+    undici-types "~8.3.0"
+
 "@types/pbf@*", "@types/pbf@^3.0.5":
   version "3.0.5"
   resolved "https://registry.npmjs.org/@types/pbf/-/pbf-3.0.5.tgz"
@@ -2506,6 +2513,11 @@ typewise@^1.0.3:
   integrity sha512-aXofE06xGhaQSPzt8hlTY+/YWQhm9P0jYUp1f2XtmW/3Bk0qzXcyFWAtPoo2uTGQj1ZwbDuSyuxicq+aDo8lCQ==
   dependencies:
     typewise-core "^1.2.0"
+
+undici-types@~8.3.0:
+  version "8.3.0"
+  resolved "https://registry.npmjs.org/undici-types/-/undici-types-8.3.0.tgz"
+  integrity sha512-j375ScV60dom+YkPFIfTLcOiPxkN/buHz5GobjLhixFuANaNs3C9l4GmrWqejgXWJ7BbJcFYpTEUkS1Ge8bpZQ==
 
 union-value@^1.0.1:
   version "1.0.1"
