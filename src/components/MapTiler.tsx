@@ -523,38 +523,6 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
     };
   };
 
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     if (selectedParkFeature && mapRef.current) {
-  //       const bounds = calculateBounds(selectedParkFeature, stopsNearby);
-
-  //       if (bounds) {
-  //         mapRef.current.fitBounds(bounds.bounds, {
-  //           padding: { top: 80, bottom: 80, left: 80, right: 80 },
-  //           maxZoom: 13, 
-  //           duration: 1000
-  //         });
-  //       }
-  //     } else if (selectedRouteFeature && mapRef.current) {
-  //       const startPoint = getRouteStartPoint(selectedRouteFeature);
-
-  //       if (startPoint) {
-  //         mapRef.current.flyTo({
-  //           center: startPoint,
-  //           zoom: 15,
-  //           duration: 1000
-  //         });
-  //       }
-  //     } else if (!selectedPark && !selectedRoute && mapRef.current) {
-  //       mapRef.current.flyTo({
-  //         center: [76.8897, 43.2389],
-  //         zoom: 12,
-  //         duration: 1000
-  //       });
-  //     }
-  //   }, 100);
-  // }, [selectedPark, selectedParkFeature, selectedRoute, selectedRouteFeature, stopsNearby, parksNearby]);
-
   useEffect(() => {
     const timeout = setTimeout(() => {
       if (!mapRef.current) return;
@@ -654,7 +622,7 @@ export default function MapTiler({ selectedPark, selectedRoute, visibleTypes, on
   return (
     <div className="w-full h-full flex flex-col block_with_map">
       {!hideLegend && (
-        <div className="flex-shrink-0 button_map_wrap">
+        <div className="flex-shrink-0 w-full z-20"> 
           <LegendOverlay
             items={legendItems.filter(item => {
               if (allowedLegendTypes) {

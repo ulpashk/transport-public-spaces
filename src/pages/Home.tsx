@@ -63,6 +63,10 @@ export default function Home() {
         </div>
 
         <div className="flex-1 flex px-6 pb-6 gap-6 min-h-0">
+          <div className="w-[40%] bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+            <NearestStopsTable onSelect={handleSelectPark} selectedPark={selectedPark} />
+          </div>
+          
           <div className="w-[60%] bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden relative">
             <MapTiler
               selectedPark={selectedPark}
@@ -70,10 +74,6 @@ export default function Home() {
               onToggleVisibility={handleToggleVisibility}
               onClearSelection={() => handleSelectPark(null)}
             />
-          </div>
-
-          <div className="w-[40%] bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-            <NearestStopsTable onSelect={handleSelectPark} selectedPark={selectedPark} />
           </div>
         </div>
       </div>

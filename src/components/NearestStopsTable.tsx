@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Search, ChevronUp, ChevronDown, ChevronsUpDown } from "lucide-react";
+import { Search, ChevronRight, ChevronLeft } from "lucide-react";
 import { getDisplayName } from "../utils/displayName";
 
 type Row = {
@@ -26,8 +26,21 @@ export default function NearestStopsTable({ onSelect, selectedPark }: NearestSto
   const [startIdx, setStartIdx] = useState(0);
   const [search, setSearch] = useState("");
   const [pageInput, setPageInput] = useState("");
+  const [filter, setFilter] = useState("Все");
+
+  const filteredRows = rows.filter(row => {
+    const matchesSearch = row.parkName.toLowerCase().includes(search.toLowerCase()) || 
+                          (row.id?.toString().includes(search));
+    
+    if (filter === "Все") return matchesSearch;
+    if (filter === "0-300 м") return matchesSearch && row.distance !== null && row.distance <= 300;
+    if (filter === "300-600 м") return matchesSearch && row.distance !== null && row.distance > 300 && row.distance <= 600;
+    if (filter === "600+ м") return matchesSearch && row.distance !== null && row.distance > 600;
+    return matchesSearch;
+  });
 
   const rowsPerPage = 10;
+  const [isEditingPage, setIsEditingPage] = useState<number | null>(null);
 
   useEffect(() => {
     const basePath = import.meta.env.BASE_URL || '/';
@@ -61,13 +74,6 @@ export default function NearestStopsTable({ onSelect, selectedPark }: NearestSto
       .finally(() => setLoading(false));
   }, []);
 
-  const filteredRows = search
-    ? rows.filter(row =>
-        row.parkName.toLowerCase().includes(search.toLowerCase()) ||
-        (row.id !== null && row.id.toString().includes(search))
-      )
-    : rows;
-
   const sortedRows = [...filteredRows].sort((a, b) => {
     let valA = a[sortKey];
     let valB = b[sortKey];
@@ -89,105 +95,106 @@ export default function NearestStopsTable({ onSelect, selectedPark }: NearestSto
   const pageCount = Math.ceil(sortedRows.length / rowsPerPage);
   const currentPage = Math.floor(startIdx / rowsPerPage) + 1;
 
-  function handleSort(key: SortKey) {
-    if (sortKey === key) {
-      setSortOrder(order => (order === "asc" ? "desc" : "asc"));
-    } else {
-      setSortKey(key);
-      setSortOrder("asc");
-    }
-    setStartIdx(0);
-  }
-
   function handlePrev() { setStartIdx(idx => Math.max(0, idx - rowsPerPage)); }
   function handleNext() { setStartIdx(idx => Math.min(sortedRows.length - rowsPerPage, idx + rowsPerPage)); }
 
-  function handlePageInput() {
-    const pageNum = parseInt(pageInput);
-    if (pageNum >= 1 && pageNum <= pageCount) {
-      setStartIdx((pageNum - 1) * rowsPerPage);
-      setPageInput("");
-    }
-  }
-
   useEffect(() => { setStartIdx(0); }, [search]);
 
-  const getStatusBadge = (distance: number | null) => {
-    if (distance === null) return { bg: "bg-gray-50", text: "text-gray-600", dot: "bg-gray-400", label: "Неизвестно" };
-    if (distance <= 200) return { bg: "bg-green-50", text: "text-green-700", dot: "bg-green-500", label: "Отлично" };
-    if (distance <= 500) return { bg: "bg-orange-50", text: "text-orange-700", dot: "bg-orange-500", label: "Хорошо" };
-    if (distance <= 1000) return { bg: "bg-yellow-50", text: "text-yellow-700", dot: "bg-yellow-500", label: "Удовлетворительно" };
-    return { bg: "bg-red-50", text: "text-red-700", dot: "bg-red-500", label: "Плохо" };
+  const getFilterColor = (label: string) => {
+    switch (label) {
+      case "0-300 м": return "bg-emerald-500";
+      case "300-600 м": return "bg-yellow-500";
+      case "600+ м": return "bg-red-500";
+      default: return "";
+    }
   };
 
-  const renderSortIcon = (key: SortKey) => {
-    if (sortKey !== key) return <ChevronsUpDown size={14} className="ml-2 opacity-20" />;
-    return sortOrder === "asc" ? <ChevronUp size={14} className="ml-2 text-blue-600" /> : <ChevronDown size={14} className="ml-2 text-blue-600" />;
+  const getDistanceColor = (dist: number | null) => {
+    if (dist === null) return "bg-gray-400";
+    if (dist <= 300) return "bg-emerald-500";
+    if (dist <= 600) return "bg-yellow-500";
+    return "bg-red-500";
+  };
+
+  const goToPage = (page: number) => {
+    if (page >= 1 && page <= pageCount) {
+      setStartIdx((page - 1) * rowsPerPage);
+    }
+  };
+
+  const handleEllipsisClick = (pagePosition: 'left' | 'right') => {
+    setIsEditingPage(pagePosition === 'left' ? currentPage - 2 : currentPage + 2);
   };
 
   if (loading) return <div className="p-10 text-center">Загрузка...</div>;
 
   return (
-    <div className="bg-white h-full flex flex-col border border-gray-200">
-      
-      <div className="p-4 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4 bg-white">
-        <div>
-           <h2 className="text-sm font-bold text-gray-800">Ближайшие остановки к общественным пространствам</h2>
-           <p className="text-[11px] text-gray-500 tracking-tight">Анализ доступности {sortedRows.length} объектов</p>
+    <div className="bg-white h-full flex flex-col border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
+
+      <div className="p-3 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4 bg-gradient-to-r from-emerald-600 to-emerald-700">
+        <div className="text-white">
+          <h2 className="text-m font-bold">Общественные пространства</h2>
+          <p className="text-[11px] text-emerald-100 tracking-tight opacity-90">
+            Анализ {sortedRows.length} пространств и их доступности
+          </p>
         </div>
+        
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={14} />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-emerald-200" size={14} />
           <input
             type="text"
             placeholder="Поиск по названию или ID..."
-            className="pl-9 pr-4 py-1.5 text-xs border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 w-64 bg-[#F9FAFB]"
+            className="pl-9 pr-4 py-2 text-xs border border-emerald-500/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-white/50 w-64 bg-emerald-800/40 text-white placeholder-emerald-200"
             value={search}
             onChange={e => setSearch(e.target.value)}
           />
         </div>
       </div>
 
+      <div className="flex gap-2 p-2 border-b border-gray-100 overflow-x-auto">
+        {["Все", "0-300 м", "300-600 м", "600+ м"].map((f) => (
+          <button 
+            key={f}
+            onClick={() => setFilter(f)}
+            className={`flex items-center gap-1.5 px-3 py-2 text-[11px] font-semibold rounded-lg border ${filter === f ? 'border-emerald-500 bg-emerald-50 text-emerald-700' : 'bg-gray-50 border-gray-200'}`}
+          >
+            {f !== "Все" && <div className={`w-2 h-2 rounded-full ${getFilterColor(f)}`} />}
+            {f}
+          </button>
+        ))}
+      </div>
+
       <div className="flex-1 overflow-auto">
-        <table className="w-full text-left border-collapse">
-          <thead className="sticky top-0 z-10 bg-[#F9FAFB] border-b border-gray-200">
+        <table className="w-full text-left">
+          <thead className="text-[12px] text-gray-400 sticky top-0 z-10 bg-white">
             <tr>
-              <th onClick={() => handleSort("id")} className="p-4 text-[11px] font-bold text-gray-500 uppercase tracking-wider cursor-pointer border-r border-gray-100 w-24">
-                <div className="flex items-center">ID {renderSortIcon("id")}</div>
-              </th>
-              <th onClick={() => handleSort("parkName")} className="p-4 text-[11px] font-bold text-gray-500 uppercase tracking-wider cursor-pointer border-r border-gray-100">
-                <div className="flex items-center">Название {renderSortIcon("parkName")}</div>
-              </th>
-              <th onClick={() => handleSort("parkDistrict")} className="p-4 text-[11px] font-bold text-gray-500 uppercase tracking-wider cursor-pointer border-r border-gray-100">
-                <div className="flex items-center">Район {renderSortIcon("parkDistrict")}</div>
-              </th>
-              <th onClick={() => handleSort("distance")} className="p-4 text-[11px] font-bold text-gray-500 uppercase tracking-wider cursor-pointer border-r border-gray-100">
-                <div className="flex items-center">Доступность {renderSortIcon("distance")}</div>
-              </th>
-              <th className="p-4 text-[11px] font-bold text-gray-500 uppercase tracking-wider">Статус</th>
+              <th className="p-2 font-bold">ID</th>
+              <th className="p-2 font-bold">Общественное пространство</th>
+              <th className="p-2 font-bold">Район</th>
+              <th className="p-2 font-bold">Расстояние до остановки</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100 bg-white">
+          <tbody className="divide-y divide-gray-50">
             {visibleRows.map((row) => {
-              const isSelected = selectedPark && row.unique_id === selectedPark.unique_id;
-              const status = getStatusBadge(row.distance);
+              const isSelected = selectedPark?.unique_id === row.unique_id;
               return (
-                <tr
-                  key={row.unique_id}
+                <tr 
+                  key={row.unique_id} 
                   onClick={() => onSelect(isSelected ? null : row)}
-                  className={`cursor-pointer transition-colors hover:bg-gray-50 ${isSelected ? "bg-blue-50/50" : ""}`}
+                  className={`cursor-pointer hover:bg-gray-50 ${isSelected ? 'bg-blue-50/50' : ''}`}
                 >
-                  <td className="p-4 text-xs font-medium text-blue-600">{row.id ?? '—'}</td>
-                  <td className="p-4">
-                    <div className="text-sm font-semibold text-gray-900">{row.parkName}</div>
-                  </td>
-                  <td className="p-4 text-sm text-gray-600">{row.parkDistrict}</td>
-                  <td className="p-4 text-sm font-bold text-gray-700">{row.distance ? `${row.distance} м` : "—"}</td>
-                  <td className="p-4">
-                    <div className={`inline-flex items-center px-3 py-1 rounded-full text-[11px] font-bold border ${status.bg} ${status.text} border-transparent shadow-sm`}>
-                      <span className={`w-1.5 h-1.5 rounded-full mr-2 ${status.dot}`}></span>
-                      {status.label}
+                  <td className="p-2 text-blue-600 font-bold text-xs">{row.id}</td>
+                  <td className="p-2">
+                    <div className="flex items-center gap-2">
+                      <div className={`w-2 h-2 rounded-full ${getDistanceColor(row.distance)}`}></div>
+                      <div>
+                        <div className="text-sm font-bold text-gray-800">{row.parkName}</div>
+                        <div className="text-[11px] text-gray-400">Парк/Сквер</div>
+                      </div>
                     </div>
                   </td>
+                  <td className="p-2 text-xs text-gray-600">{row.parkDistrict}</td>
+                  <td className="p-2 text-xs font-bold text-gray-800">{row.distance} м</td>
                 </tr>
               );
             })}
@@ -195,38 +202,77 @@ export default function NearestStopsTable({ onSelect, selectedPark }: NearestSto
         </table>
       </div>
 
-      <div className="p-4 border-t border-gray-200 flex justify-between items-center bg-[#F9FAFB]">
-        <div className="text-xs text-gray-500 font-medium">
-          Стр. {currentPage} из {pageCount} • {sortedRows.length} объектов
-        </div>
+      <div className="p-4 border-t border-gray-100 flex justify-between items-center text-sm">
+        <span className="text-gray-500 font-medium">
+          Показано {startIdx + 1}–{Math.min(startIdx + rowsPerPage, sortedRows.length)} из {sortedRows.length}
+        </span>
         
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-gray-400">Перейти:</span>
-            <input
-              type="number"
-              value={pageInput}
-              onChange={(e) => setPageInput(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handlePageInput()}
-              className="w-12 px-1 py-1 text-xs border border-gray-300 rounded text-center"
-            />
-          </div>
-          <div className="flex gap-2">
-            <button
-              onClick={handlePrev}
-              disabled={startIdx === 0}
-              className="px-3 py-1.5 text-xs font-semibold bg-white border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-40"
-            >
-              Назад
+        <div className="flex items-center gap-1.5">
+          <button 
+            onClick={handlePrev} 
+            disabled={currentPage === 1}
+            className="p-2 border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 disabled:opacity-30"
+          >
+            <ChevronLeft size={16}/>
+          </button>
+
+          <button
+            onClick={() => goToPage(1)}
+            className={`w-8 h-8 rounded-lg text-xs font-bold transition-all ${currentPage === 1 ? 'bg-[#059669] text-white shadow-md' : 'text-gray-600 hover:bg-gray-100'}`}
+          >
+            1
+          </button>
+
+          {currentPage > 3 && (
+            isEditingPage === currentPage - 2 ? (
+              <input 
+                type="number" 
+                autoFocus
+                className="w-10 h-8 text-center text-xs border border-emerald-500 rounded-lg outline-none"
+                onBlur={(e) => { setIsEditingPage(null); goToPage(parseInt(e.target.value)); }}
+                onKeyDown={(e) => { if(e.key === 'Enter') { setIsEditingPage(null); goToPage(parseInt(e.currentTarget.value)); }}}
+              />
+            ) : (
+              <span className="px-2 text-gray-400 cursor-pointer hover:text-emerald-600" onClick={() => handleEllipsisClick('left')}>...</span>
+            )
+          )}
+          
+          {currentPage !== 1 && currentPage !== pageCount && (
+            <button className="w-8 h-8 rounded-lg text-xs font-bold bg-[#059669] text-white shadow-md">
+              {currentPage}
             </button>
+          )}
+
+          {currentPage < pageCount - 2 && (
+            isEditingPage === currentPage + 2 ? (
+              <input 
+                type="number" 
+                autoFocus
+                className="w-10 h-8 text-center text-xs border border-emerald-500 rounded-lg outline-none"
+                onBlur={(e) => { setIsEditingPage(null); goToPage(parseInt(e.target.value)); }}
+                onKeyDown={(e) => { if(e.key === 'Enter') { setIsEditingPage(null); goToPage(parseInt(e.currentTarget.value)); }}}
+              />
+            ) : (
+              <span className="px-2 text-gray-400 cursor-pointer hover:text-emerald-600" onClick={() => handleEllipsisClick('right')}>...</span>
+            )
+          )}
+
+          {pageCount > 1 && (
             <button
-              onClick={handleNext}
-              disabled={startIdx + rowsPerPage >= sortedRows.length}
-              className="px-3 py-1.5 text-xs font-semibold bg-white border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-40"
+              onClick={() => goToPage(pageCount)}
+              className={`w-8 h-8 rounded-lg text-xs font-bold transition-all ${currentPage === pageCount ? 'bg-[#059669] text-white shadow-md' : 'text-gray-600 hover:bg-gray-100'}`}
             >
-              Вперед
+              {pageCount}
             </button>
-          </div>
+          )}
+
+          <button 
+            onClick={handleNext} 
+            disabled={currentPage === pageCount}
+            className="p-2 border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 disabled:opacity-30"
+          >
+            <ChevronRight size={16}/>
+          </button>
         </div>
       </div>
     </div>
