@@ -130,7 +130,6 @@ export default function NearestStopsTable({ onSelect, selectedPark }: NearestSto
 
   return (
     <div className="bg-white h-full flex flex-col border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
-
       <div className="p-3 border-b border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4 bg-gradient-to-r from-emerald-600 to-emerald-700">
         <div className="text-white">
           <h2 className="text-m font-bold">Общественные пространства</h2>

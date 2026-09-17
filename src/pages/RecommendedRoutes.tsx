@@ -313,7 +313,7 @@ export default function RecommendedRoutes() {
       <div className="h-screen flex flex-col bg-[#F9FAFB] overflow-hidden">
         <Header />
 
-        <div className="grid grid-cols-5 gap-4 px-6 py-4 flex-shrink-0">
+        <div className="grid grid-cols-5 gap-4 px-6 py-6 flex-shrink-0">
           {loading ? (
              <div className="col-span-5 h-24 bg-white rounded-xl flex items-center justify-center border border-gray-100">
                <Loader className="animate-spin mr-2" /> Загрузка...
@@ -328,7 +328,16 @@ export default function RecommendedRoutes() {
         </div>
 
         <div className="flex-1 flex px-6 pb-6 gap-6 min-h-0">
-          
+          <div className="w-[40%] bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+            <RoutesTable 
+              onSelect={handleSelectRoute} 
+              selectedRoute={selectedRoute} 
+              routes={routes} 
+              loading={loading} 
+              error={error} 
+            />
+          </div>
+
           <div className="w-[60%] bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden relative">
             <MapTiler
               selectedRoute={selectedRoute ? {
@@ -343,16 +352,6 @@ export default function RecommendedRoutes() {
               allowedLegendTypes={["Остановка", "Рекомендованная остановка", "Озеленение"]}
               showAllForLegendTypes={true}
               onClearSelection={() => setSelectedRoute(null)}
-            />
-          </div>
-
-          <div className="w-[40%] bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-            <RoutesTable 
-              onSelect={handleSelectRoute} 
-              selectedRoute={selectedRoute} 
-              routes={routes} 
-              loading={loading} 
-              error={error} 
             />
           </div>
         </div>

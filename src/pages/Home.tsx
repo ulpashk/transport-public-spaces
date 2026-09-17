@@ -52,6 +52,7 @@ export default function Home() {
     <Layout>
       <div className="h-screen flex flex-col bg-[#F9FAFB] overflow-hidden">
         <Header />
+        
         <div className="grid grid-cols-5 gap-4 px-6 py-6 flex-shrink-0">
           {loading ? (
             <div className="col-span-5 h-24 flex items-center justify-center bg-white rounded-xl shadow-sm border border-gray-100">
